@@ -1,642 +1,9 @@
-#include <iostream>
-#include<cstring>
-//#include "b+ tree.h"
 
-//#pragma GCC optimize(2)
-//1
-//insert FlowersForAlgernon 1966
-//insert CppPrimer 2012
-//insert Dune 2021
-//insert CppPrimer 2001
-//find CppPrimer
-//find Java
-//delete Dune 2021
-//find Dune
-//
-// Created by DELL on 2023/4/9.
-//
 #ifndef B_TREE_B_TREE_H
 #define B_TREE_B_TREE_H
-#include <cstring>
 #include<fstream>
-using namespace std;
-template<typename T>
-class vector {
-public:
-    /**
-     * TODO
-     * a type for actions of the elements of a vector, and you should write
-     *   a class named const_iterator with same interfaces.
-     */
-    /**
-     * you can see RandomAccessIterator at CppReference for help.
-     */
-    //T *array = nullptr;
-    T*tmp= nullptr;
-    int capacity = 16;
-    int length = -1;//下标
-    std::allocator<T>alloc;
-    class const_iterator;
-    class iterator {
-        // The following code is written for the C++ type_traits library.
-        // Type traits is a C++ feature for describing certain properties of a type.
-        // For instance, for an iterator, iterator::value_type is the type that the
-        // iterator points to.
-        // STL algorithms and containers may use these type_traits (e.g. the following
-        // typedef) to work properly. In particular, without the following code,
-        // @code{std::sort(iter, iter1);} would not compile.
-        // See these websites for more information:
-        // https://en.cppreference.com/w/cpp/header/type_traits
-        // About value_type: https://blog.csdn.net/u014299153/article/details/72419713
-        // About iterator_category: https://en.cppreference.com/w/cpp/iterator
-    public:
-        using difference_type = std::ptrdiff_t;
-        using value_type = T;
-        using pointer = T *;
-        using reference = T &;
-        using iterator_category = std::output_iterator_tag;
-
-    private:
-        /**
-         * TODO add data members
-         *   just add whatever you want.
-         */
-    public:
-        int num=-1;
-        vector<T> * vec;
-        iterator(){
-            vec= nullptr;
-        }
-
-        iterator(const iterator&it){
-            num=it.num;
-            vec=it.vec;
-        }
-        /**
-         * return a new iterator which pointer n-next elements
-         * as well as operator-
-         */
-        iterator operator+(const int &n)  {
-            iterator itt=*this;
-            itt.num+=n;
-//                for (int i = 0; i < n; i++) {
-//                    itt.point++;
-//                    //num++;
-//                }
-            return itt;
-            //TODO
-        }
-
-        iterator operator-(const int &n)  {
-            iterator itt=*this;
-            itt.num-=n;
-//                for (int i = 0; i < n; i++) {
-//                    itt.point--;
-//                }
-            return itt;
-            //TODO
-        }
-
-        // return the distance between two iterators,
-        // if these two iterators point to different vectors, throw invaild_iterator.
-        int operator-(const iterator &rhs) const {
-            //invalid_iterator ex;
-            //exception ex("","invalid_iterator");
-            //if(vec->tmp!=rhs.vec->tmp)throw ex.what();
-            return num-rhs.num>0?num-rhs.num:rhs.num-num;
-            //TODO
-        }
-
-        iterator &operator+=(const int &n) {
-            num+=n;
-            return *this;
-            //TODO
-        }
-
-        iterator &operator-=(const int &n) {
-            num-=n;
-//                for(int i=0;i<n;i++){
-//                    point--;
-//                }
-            return *this;
-            //TODO
-        }
-
-        /**
-         * TODO iter++
-         */
-        iterator operator++(int) {
-            iterator it=*this;
-            num++;
-            //point++;
-            return it;
-        }
-
-        /**
-         * TODO ++iter
-         */
-        iterator &operator++() {
-            num++;
-            //point++;
-            return *this;
-        }
-
-        /**
-         * TODO iter--
-         */
-        iterator operator--(int) {
-            iterator it=*this;
-            num--;
-            //point--;
-            return it;
-        }
-
-        /**
-         * TODO --iter
-         */
-        iterator &operator--() {
-            num--;
-            //point--;
-            return *this;
-        }
-
-        /**
-         * TODO *it
-         */
-        T &operator*() const {
-            T *tp=vec->tmp;
-            tp+=num;
-            return *tp;
-        }
-
-        /**
-         * a operator to check whether two iterators are same (pointing to the same memory address).
-         */
-        bool operator==(const iterator &rhs) const {
-            return num==rhs.num&&rhs.vec->tmp==vec->tmp;
-        }
-
-        bool operator==(const const_iterator &rhs) const {
-            return num==rhs.num&&rhs.vec->tmp==vec->tmp;
-        }
-
-        /**
-         * some other operator for iterator.
-         */
-        bool operator!=(const iterator &rhs) const {
-            return num!=rhs.num||rhs.vec->tmp!=vec->tmp;
-        }
-
-        bool operator!=(const const_iterator &rhs) const {
-            return num!=rhs.num||rhs.vec->tmp!=vec->tmp;
-        }
-    };
-
-    /**
-     * TODO
-     * has same function as iterator, just for a const object.
-     */
-    class const_iterator {
-    public:
-        using difference_type = std::ptrdiff_t;
-        using value_type = T;
-        using pointer = T *;
-        using reference = T &;
-        using iterator_category = std::output_iterator_tag;
-        //pointer point,head;
-        int num=-1;
-        const vector<T>* vec= nullptr;
-        const_iterator operator+(const int &n)  {
-            const_iterator itt=*this;
-            itt.num+=n;
-//                for (int i = 0; i < n; i++) {
-//                    itt.point++;
-//                    //num++;
-//                }
-            return itt;
-            //TODO
-        }
-
-        const_iterator operator-(const int &n)  {
-            const_iterator itt=*this;
-            itt.num-=n;
-//                for (int i = 0; i < n; i++) {
-//                    itt.point--;
-//                }
-            return itt;
-            //TODO
-        }
-
-        // return the distance between two iterators,
-        // if these two iterators point to different vectors, throw invaild_iterator.
-        int operator-(const const_iterator &rhs) const {
-            //invalid_iterator ex;
-            //exception ex("","invaild_iterator");
-            //if(vec->tmp!=rhs.vec->tmp)throw ex.what();
-            return num-rhs.num>0?num-rhs.num:rhs.num-num;
-            //TODO
-        }
-
-        const_iterator &operator+=(const int &n) {
-            num+=n;
-//                for(int i=0;i<n;i++){
-//                    point++;
-//                }
-            return *this;
-            //TODO
-        }
-
-        const_iterator &operator-=(const int &n) {
-            num-=n;
-//                for(int i=0;i<n;i++){
-//                    point--;
-//                }
-            return *this;
-            //TODO
-        }
-
-        /**
-         * TODO iter++
-         */
-        const_iterator operator++(int) {
-            const_iterator it=*this;
-            num++;
-            //point++;
-            return it;
-        }
-
-        /**
-         * TODO ++iter
-         */
-        const_iterator &operator++() {
-            num++;
-            //point++;
-            return *this;
-        }
-
-        /**
-         * TODO iter--
-         */
-        const_iterator operator--(int) {
-            const_iterator it=*this;
-            num--;
-            //point--;
-            return it;
-        }
-
-        /**
-         * TODO --iter
-         */
-        const_iterator &operator--() {
-            num--;
-            return *this;
-        }
-
-        /**
-         * TODO *it
-         */
-        T &operator*() const {
-            T*tp=vec->tmp;
-            tp+=num;
-            return *tp;
-        }
-
-        /**
-         * a operator to check whether two iterators are same (pointing to the same memory address).
-         */
-        bool operator==(const iterator &rhs) const {
-            return num==rhs.num&&rhs.vec->tmp==vec->tmp;
-        }
-
-        bool operator==(const const_iterator &rhs) const {
-            return num==rhs.num&&rhs.vec->tmp==vec->tmp;
-        }
-
-        /**
-         * some other operator for iterator.
-         */
-        bool operator!=(const iterator &rhs) const {
-            return num!=rhs.num||rhs.vec->tmp!=vec->tmp;
-        }
-
-        bool operator!=(const const_iterator &rhs) const {
-            return num!=rhs.num||rhs.vec->tmp!=vec->tmp;
-        }
-
-    };
-
-    /**
-     * TODO Constructs
-     * At least two: default constructor, copy constructor
-     */
-    vector() {
-        tmp=alloc.allocate(capacity);
-//            for(int i=0;i<capacity;i++){
-//                alloc.construct(tmp+i,array[i]);
-//            }
-        length = -1;
-    }
-
-    vector(const vector &other) {
-        if(tmp== nullptr){
-            tmp=alloc.allocate(capacity);
-            length = -1;
-        }
-        if (other.tmp != tmp) {
-            for(int i=0;i<=length;i++){
-                alloc. destroy(tmp+i);
-            }
-            alloc.deallocate(tmp,capacity);
-            capacity=other.capacity;
-            tmp=alloc.allocate(capacity);
-            length = other.length;
-            for(int i=0;i<=length;i++){
-                alloc.construct(tmp+i,*(other.tmp+i));
-                //if(i<=length)array[i]=other.array[i];
-            }
-        }
-
-    }
-    /**
-     * TODO Destructor
-     */
-    ~vector() {
-        for(int i=0;i<=length;i++){
-            alloc. destroy(tmp+i);
-        }
-        alloc.deallocate(tmp,capacity);
-    }
-
-    /**
-     * TODO Assignment operator
-     */
-    vector &operator=(const vector &other) {
-        if (other.tmp == tmp) {
-            return *this;
-        }
-        for(int i=0;i<=length;i++){
-            alloc. destroy(tmp+i);
-        }
-        alloc.deallocate(tmp,capacity);
-        capacity=other.capacity;
-        tmp=alloc.allocate(capacity);
-        length = other.length;
-        for(int i=0;i<=length;i++){
-            alloc.construct(tmp+i,*(other.tmp+i));
-            //if(i<=length)array[i]=other.array[i];
-        }
-        return *this;
-    }
-
-    /**
-     * assigns specified element with bounds checking
-     * throw index_out_of_bound if pos is not in [0, size)
-     */
-    T &at(const size_t &pos) {
-        //index_out_of_bound ex;
-        //exception ex("", "index_out_of_bound");
-        //ex.detail="index_out_of_bound";
-        //if (pos > length || pos < 0)throw ex.what();
-        return *(tmp+pos);
-    }
-
-    const T &at(const size_t &pos) const {
-        //index_out_of_bound ex;
-
-        //exception ex("", "index_out_of_bound");
-        //if (pos > length || pos < 0)throw ex.what();
-        return *(tmp+pos);
-    }
-
-    /**
-     * assigns specified element with bounds checking
-     * throw index_out_of_bound if pos is not in [0, size)
-     * !!! Pay attentions
-     *   In STL this operator does not check the boundary but I want you to do.
-     */
-    T &operator[](const size_t &pos) {
-        //index_out_of_bound ex;
-
-        //exception ex("", "index_out_of_bound");
-        //if (pos > length || pos < 0)throw ex.what();
-        return *(tmp+pos);
-    }
-
-    const T &operator[](const size_t &pos) const {
-        //index_out_of_bound ex;
-
-        //exception ex("", "index_out_of_bound");
-        //if (pos > length || pos < 0)throw ex.what();
-        return *(tmp+pos);
-    }
-
-    /**
-     * access the first element.
-     * throw container_is_empty if size == 0
-     */
-    const T &front() const {
-        //container_is_empty ex;
-        //exception ex("", "container_is_empty");
-        if(length<0){
-            //throw ex.what();
-        }
-        return *tmp;
-    }
-
-    /**
-     * access the last element.
-     * throw container_is_empty if size == 0
-     */
-    const T &back() const {
-        //container_is_empty ex;
-
-        //exception ex("", "container_is_empty");
-        if(length<0){
-            //throw ex.what();
-        }
-        return *(tmp+length);
-    }
-
-    /**
-     * returns an iterator to the beginning.
-     */
-    iterator begin() {
-        iterator it;
-        it.num=0;
-        it.vec=this;
-        return it;
-    }
-
-    const_iterator cbegin() const {
-        const_iterator it;
-        it.num=0;
-        it.vec=this;
-        //it.point=it.head=&array[0];
-        return it;
-    }
-
-    /**
-     * returns an iterator to the end.
-     */
-    iterator end() {
-        iterator it;
-        it.num=length+1;
-        it.vec=this;
-        return it;
-    }
-
-    const_iterator cend() const {
-        const_iterator it;
-        it.vec=this;
-        it.num=length+1;
-        return it;
-    }
-
-    /**
-     * checks whether the container is empty
-     */
-    bool empty() const {
-        return length<0;
-    }
-
-    /**
-     * returns the number of elements
-     */
-    size_t size() const {
-        return length+1;
-    }
-
-    /**
-     * clears the contents
-     */
-    void clear() {
-        for(int i=0;i<=length;i++){
-            alloc.destroy(tmp+i);
-        }
-        length=-1;
-    }
-
-    void double_size(){
-
-        T*mid;T*temp;
-        std::allocator<T>alloca;
-        temp=alloca.allocate(capacity);
-        for(int i=0;i<=length;i++){
-            alloca. construct(temp+i,*(tmp+i));
-            alloc. destroy(tmp+i);
-            //mid[i]=array[i];
-        }
-        alloc.deallocate(tmp,capacity);
-        capacity*=2;
-        tmp=alloc.allocate(capacity);
-        for(int i=0;i<=length;i++){
-            alloc. construct(tmp+i,*(temp+i));
-            alloca. destroy(temp+i);
-        }
-        alloca.deallocate(temp,capacity/2);
-    }
-    /**
-     * inserts value before pos
-     * returns an iterator pointing to the inserted value.
-     */
-    iterator insert(iterator pos, const T &value) {
-        if(length+1<capacity-1){
-            for(int i=length+1;i>pos.num;i--){
-                *(tmp+i)=*(tmp+i-1);
-            }
-            length++;
-            *(tmp+pos.num)=value;
-            return pos;
-        }else{
-            double_size();
-            return insert(pos,value);
-        }
-    }
-    /**
-     * inserts value at index ind.
-     * after inserting, this->at(ind) == value
-     * returns an iterator pointing to the inserted value.
-     * throw index_out_of_bound if ind > size (in this situation ind can be size because after inserting the size will increase 1.)
-     */
-    iterator insert(const size_t &ind, const T &value) {
-        if(length+1<capacity-1){
-            //index_out_of_bound ex;
-            //exception ex("","index_out_of_bound");
-            if(ind>length+1){
-                //throw ex.what();
-            }else {
-                for(int i=length+1;i>ind;i--){
-                    *(tmp+i)=*(tmp+i-1);
-                }
-                *(tmp+ind)=value;
-            }
-            iterator it;
-            it.num=ind;
-            it.vec=this;
-//                it.head=&array[0];
-//                it.point=&array[ind];
-            return it;
-        }else{
-            double_size();
-            return insert(ind,value);
-        }
-    }
-
-    /**
-     * removes the element at pos.
-     * return an iterator pointing to the following element.
-     * If the iterator pos refers the last element, the end() iterator is returned.
-     */
-    iterator erase(iterator pos) {
-        for(int i=pos.num;i<length;i++){
-            *(tmp+i)=*(tmp+i+1);
-        }
-        alloc. destroy(tmp+length);
-        length--;
-        return pos;
-    }
-    /**
-     * removes the element with index ind.
-     * return an iterator pointing to the following element.
-     * throw index_out_of_bound if ind >= size
-     */
-    iterator erase(const size_t &ind) {
-        iterator it;
-        for(int i=ind;i<length;i++){
-            *(tmp+i)=*(tmp+i+1);
-        }
-        alloc. destroy(tmp+length);
-        length--;
-//            it.head=&array[0];
-//            it.point=&array[ind];
-        it.num=ind;
-        it.vec=this;
-        return it;
-    }
-
-    /**
-     * adds an element to the end.
-     */
-    void push_back(const T &value) {
-        if(length+1<capacity-1){
-            length++;
-            alloc. construct(tmp+length,value);
-            //array[++length]=value;
-            return;
-        }
-        double_size();
-        push_back(value);
-    }
-
-    /**
-     * remove the last element from the end.
-     * throw container_is_empty if size() == 0
-     */
-    void pop_back() {
-        alloc. destroy(tmp+length);
-        length--;
-    }
-};
+#include<cstring>
+#include "vector.hpp"
 struct myString {//index
 private:
     char s[70];
@@ -686,25 +53,25 @@ struct point {//叶子上元素
 //        valu = b;
     }
 
-    friend bool operator==(const point &a, const point &b) {
-        return (a.index == b.index && a.valu == b.valu);
-    }
+//    friend bool operator==(const point &a, const point &b) {
+//        return (a.index == b.index && a.valu == b.valu);
+//    }
 
     friend bool operator<(const point &a, const point &b) {
         return ((a.index < b.index) || (a.index == b.index && a.valu < b.valu));
     }
 
-    friend bool operator>(const point &a, const point &b) {
-        return (!(a == b) && (!(a < b)));
-    }
+//    friend bool operator>(const point &a, const point &b) {
+//        return (!(a == b) && (!(a < b)));
+//    }
 
     friend bool operator>=(const point &a, const point &b) {
         return !(a < b);
     }
 
-    friend bool operator<=(const point &a, const point &b) {
-        return !(a > b);
-    }
+//    friend bool operator<=(const point &a, const point &b) {
+//        return !(a > b);
+//    }
 };
 //struct dir {
 //    int pla;//第几号
@@ -730,19 +97,20 @@ class b_plus_tree {
 public:
     const int maxsize = 100, minsize = 50,m=101;
     int total=-1;
-    vector<int> vec;
-    vector<block<key,T>>ve;
-    string file;
-    fstream inout;
+    sjtu::vector<int> vec;
+    sjtu::vector<block<key,T>>ve;
+    std::string file;
+    std::fstream inout;
     int root=-1;
 
     b_plus_tree() = default;
 
-    b_plus_tree(string name) : file(name) {
+    b_plus_tree(std::string name)   {
+        file=name;
         inout.open(file);
         if (!inout) {
             block<key, T> tmp;
-            ofstream out;
+            std::ofstream out;
             out.open(file);
             //num_of_find = -1;
             root=-1;
@@ -826,7 +194,7 @@ public:
                 //if(fin.leaf)break;
 
                 int mid=(low+high)>>1;
-                if(ele<new_.ele[mid]){
+                if(ele.index<new_.ele[mid].index){
                     high=mid;
                 }else{
                     low=mid+1;
@@ -842,7 +210,7 @@ public:
 
         int tmp=0;
         for(int i=0;i<new_.size;i++){
-            if(ele<new_.ele[i])break;
+            if(ele.index<new_.ele[i].index)break;
             tmp++;
         }
         for(int i=new_.size;i>tmp;i--){
@@ -996,14 +364,17 @@ public:
         mywrite(nod.place,nod);
         return nod;
     }
-
-    void find(key ke) {
-        point<myString,int>k(ke,-2147483647-1);
+//    void modify(point<key,T> &p){
+//
+//    }
+    bool exist(key ke) {
+        point<key,T>k(ke,T());
         bool flag=0,fla=0;
         //compare cp;
         block<key,T> fin;
         if(root==-1){
-            printf("%s\n","null");return;
+//            printf("%s\n","null");
+            return flag;
 
         }
         //cout<<root<<'\n';
@@ -1015,7 +386,7 @@ public:
             while(low<high){
                 //if(fin.leaf)break;
                 int mid=(low+high)>>1;
-                if(k<fin.ele[mid]){
+                if(k.index<fin.ele[mid].index){
                     high=mid;
                 }else{
                     low=mid+1;
@@ -1028,8 +399,8 @@ public:
 
         if(k.index<fin.mini.index){
 
-            printf("%s\n","null");
-            return;
+            //printf("%s\n","null");
+            return flag;
         }
 
         //int siz=fin.size;
@@ -1039,26 +410,93 @@ public:
             if(k.index<fin.ele[i].index)break;
             if(fin.ele[i].index==k.index){
                 flag=1;
+                break;
                 //cout<<1;
-                printf("%d ",fin.ele[i].valu);
+                //printf("%d ",fin.ele[i].valu);
 
-                if(i==fin.size-1&&fin.next!=-1){
-                    //cout<<fin.next;
-                    myread(fin.next,fin);
-                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
-                    i=-1;
-                    //siz=fin.size;
+//                if(i==fin.size-1&&fin.next!=-1){
+//                    //cout<<fin.next;
+//                    myread(fin.next,fin);
+//                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
+//                    i=-1;
+//                    //siz=fin.size;
+//                }
+            }
+//            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
+//                myread(fin.next,fin);
+//                fla=1;
+//                i=-1;
+//            }
+
+        }
+        return flag;
+//        if(!flag)printf("%s\n","null");
+//        else printf("\n");
+    }
+    block<key,T> getblock(key ke){
+        point<key,T>k(ke,T());
+        bool flag=0,fla=0;
+        //compare cp;
+        block<key,T> fin;
+        myread(root,fin);
+        //cout<<fin.ele[1].valu;
+        while(!fin.leaf){
+            //cout<<fin.size<<' '<<fin.ele[0].valu<<' '<<fin.ele[1].valu<<' '<<fin.ele[2].valu<<'\n';
+            int low=0,high=fin.size;
+            while(low<high){
+                //if(fin.leaf)break;
+                int mid=(low+high)>>1;
+                if(k.index<fin.ele[mid].index){
+                    high=mid;
+                }else{
+                    low=mid+1;
                 }
             }
-            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
-                myread(fin.next,fin);
-                fla=1;
-                i=-1;
+            //cout<<low;
+            myread(fin.pos[low],fin);
+        }
+        return fin;
+//        for(int i=0;i<fin.size;i++){
+//            //cout<<fin.ele[0].valu<<' ';
+//            //if(k.index<fin.ele[i].index)break;
+//            if(fin.ele[i].index==k.index){
+//                return fin.ele[i].valu;
+//
+//            }
+//
+//        }
+    }
+    T find(key ke) {
+        point<key,T>k(ke,T());
+        bool flag=0,fla=0;
+        //compare cp;
+        block<key,T> fin;
+        myread(root,fin);
+        //cout<<fin.ele[1].valu;
+        while(!fin.leaf){
+            //cout<<fin.size<<' '<<fin.ele[0].valu<<' '<<fin.ele[1].valu<<' '<<fin.ele[2].valu<<'\n';
+            int low=0,high=fin.size;
+            while(low<high){
+                //if(fin.leaf)break;
+                int mid=(low+high)>>1;
+                if(k.index<fin.ele[mid].index){
+                    high=mid;
+                }else{
+                    low=mid+1;
+                }
+            }
+            //cout<<low;
+            myread(fin.pos[low],fin);
+        }
+        for(int i=0;i<fin.size;i++){
+            //cout<<fin.ele[0].valu<<' ';
+            //if(k.index<fin.ele[i].index)break;
+            if(fin.ele[i].index==k.index){
+                return fin.ele[i].valu;
+
             }
 
         }
-        if(!flag)printf("%s\n","null");
-        else printf("\n");
     }
     void adjust(block<key,T>new_,point<key,T>&ele){
         while(vec.size()){
@@ -1082,7 +520,7 @@ public:
         while(low<high){
             //if(fin.leaf)break;
             int mid=(low+high)>>1;
-            if(ele<fin.ele[mid]){
+            if(ele.index<fin.ele[mid].index){
                 high=mid;
             }else{
                 low=mid+1;
@@ -1094,7 +532,6 @@ public:
         if(root==-1)return;
         block<key,T>fin;
         myread(root,fin);
-
         while(!fin.leaf){
             //cout<<fin.size<<' '<<fin.ele[0].valu<<' '<<fin.ele[1].valu<<' '<<fin.ele[2].valu<<'\n';
             int low=0,high=fin.size;
@@ -1109,7 +546,7 @@ public:
 
         int tmp=0;
         for(int i=0;i<fin.size;i++){
-            if(ele==fin.ele[i])break;
+            if(ele.index==fin.ele[i].index)break;
             tmp++;
         }
         for(int i=tmp;i<fin.size-1;i++){
@@ -1143,7 +580,7 @@ public:
             int low=0,high=node.size;
             while(low<high){
                 int mid=(high+low)>>1;
-                if(past<node.ele[mid]){
+                if(past.index<node.ele[mid].index){
                     high=mid;
                 }else{
                     low=mid+1;
@@ -1244,7 +681,6 @@ public:
         block<key,T>tmp,tm,son,pa;
         if(first.parent!=-1){
             myread(second.parent,tmp);
-
             int low = 0, high = tmp.size;
             //if(first.parent==second.parent) {
             low= bound(low,high,tmp,second.ele[0]);
