@@ -26,7 +26,7 @@ public:
             return " ";
         }
         if(!hasMoreTokens())return "";
-        int i=0;
+        //int i=0;
 
         std::string ss;
 
@@ -37,7 +37,7 @@ public:
             //if(line[pos]<32||line[pos]==127)return "";
             ss+=line[pos];
             pos++;
-            i++;
+            //i++;
         }
         return ss;
     }
