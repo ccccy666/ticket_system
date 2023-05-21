@@ -7,14 +7,21 @@ class scanner{
 public:
     string line;
     int pos;
-    scanner(){}
+    //bool move=0;
+    scanner(){
+        line="";
+        pos=0;
+    }
     ~scanner(){}
     void setInput(string &line_){
         line=line_;
+        line.pop_back();
         pos=0;
+        //line=line-line[line.size()-1];
     }
 
     string nextToken (){
+        //if(move)line.pop_back()
         bool flag=0;
         for(int j=0;j<line.length();j++){
             if(line[j]!=' '){
@@ -33,7 +40,7 @@ public:
         while(line[pos]==' '){
             pos++;
         }
-        while(line[pos]!=' '&&line[pos]!='\0'){
+        while(line[pos]!=' '&&line[pos]!='\0'&&line[pos]!='\n'){
             //if(line[pos]<32||line[pos]==127)return "";
             ss+=line[pos];
             pos++;
@@ -47,7 +54,7 @@ public:
         while(line[k]==' '){
             k++;
         }
-        if(line[k]=='\0')return false;
+        if(line[k]=='\0'||line[k]=='\n')return false;
         return true;
     }
 };
