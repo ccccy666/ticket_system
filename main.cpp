@@ -57,8 +57,8 @@ void print(){
 }
 
 int main() {
-    freopen("in1.txt","r",stdin);
-    freopen("1.txt", "w", stdout);
+    //freopen("in1.txt","r",stdin);
+    //freopen("1.txt", "w", stdout);
     //fclose(stdin);
     //fclose(stdout);
     sjtu::map<user_id, account> now_user;
