@@ -920,7 +920,7 @@ int main() {
             order_.clear();
             wait.clear();
             printf("0\n");
-        } else if (op == "exi") {
+        } else if (op == "exi"||op=="exit") {
             //std::cout<<all_ac.tr.root;
             //std::cout<<"bye"<<std::endl;
             printf("bye\n");
