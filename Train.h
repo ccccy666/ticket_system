@@ -1,6 +1,6 @@
 
-#ifndef B_TREE_TRAIN_H
-#define B_TREE_TRAIN_H
+#ifndef CODE_TRAIN_H
+#define CODE_TRAIN_H
 #include <iostream>
 #include<cstring>
 #include<iomanip>
@@ -462,10 +462,10 @@ public:
         max=other.max;
         //d=other.d;
         //for(int i=1;i<=d+1;i++){
-            for(int j=1;j<num;j++){
-                sea[j]=other.sea[j];
-            }
+        for(int j=1;j<num;j++){
+            sea[j]=other.sea[j];
         }
+    }
     //}
     bool operator<(const seat &other) const {
         return (id < other.id);
@@ -484,7 +484,7 @@ class seats{
 public:
 
     b_plus_tree<train_seat,seat>tr;
-    seats():tr("seats"){}
+    seats():tr("a_seats"){}
     void insert(point<train_seat,seat> &ele){
         tr.insert(ele);
     }
@@ -612,9 +612,9 @@ struct out1 {
 //    }
     bool operator<(const out1 &other) const{
         return (time < other.time) || (time == other.time && cost < other.cost) ||
-                                       (time == other.time && cost == other.cost && id1 < other.id1) ||
-                                       (time == other.time && cost == other.cost && id1 == other.id1 &&
-                                        id2 < other.id2);
+               (time == other.time && cost == other.cost && id1 < other.id1) ||
+               (time == other.time && cost == other.cost && id1 == other.id1 &&
+                id2 < other.id2);
     }
 };
 
@@ -685,7 +685,7 @@ public:
 class order{
 public:
     b_plus_tree_<user_id,ticket_information> tr;
-    order():tr("order"){}
+    order():tr("a_order"){}
     ~order(){}
     void insert(point_<user_id,ticket_information> &el){
         tr.insert(el);
@@ -751,12 +751,12 @@ public:
                 break;
             }
             if(i==fin.size-1&&fin.next!=-1){
-                    //cout<<fin.next;
-                    tr.myread(fin.next,fin);
-                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
-                    i=-1;
-                    //siz=fin.size;
-                }
+                //cout<<fin.next;
+                tr.myread(fin.next,fin);
+                //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
+                i=-1;
+                //siz=fin.size;
+            }
 //            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
 //                tr.myread(fin.next,fin);
 //                fla=1;
@@ -911,7 +911,7 @@ public:
 class pendings{
 public:
     b_plus_tree_<trainID,pending>tr;
-    pendings():tr("pending"){}
+    pendings():tr("a_pending"){}
     ~pendings(){}
     void insert(point_<trainID,pending> &el){
         tr.insert(el);
@@ -933,7 +933,7 @@ public:
     b_plus_tree<trainID, train> tr;
     b_plus_tree_<station_name, train> tr1;
     //linklist_<>
-    All_train() : tr("train"), tr1("station") {}
+    All_train() : tr("a_train"), tr1("a_station") {}
 
     ~All_train() {
 
@@ -1742,7 +1742,7 @@ public:
                 }
 
                 in.d=d;
-                 price=tra.price[num2-1]-tra.price[num1-1];
+                price=tra.price[num2-1]-tra.price[num1-1];
                 traveltime=tra.travelTime[num2-1]-tra.travelTime[num1-1]+tra.stopTime[num2-1]-tra.stopTime[num1];
                 //std::cout<<traveltime<<std::endl;
                 t=ti+traveltime;
@@ -1806,4 +1806,4 @@ public:
     }
 };
 
-#endif //B_TREE_TRAIN_H
+#endif //CODE_TRAIN_H
