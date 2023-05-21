@@ -1,6 +1,6 @@
 
-#ifndef B_TREE_B_TREE_H
-#define B_TREE_B_TREE_H
+#ifndef CODE_B_TREE_H
+#define CODE_B_TREE_H
 #include<fstream>
 #include<cstring>
 #include "vector.hpp"
@@ -403,9 +403,11 @@ public:
         myread(root,fin);
         //cout<<fin.ele[1].valu;
         while(!fin.leaf){
+            //std::cout<<root<<std::endl;
             //cout<<fin.size<<' '<<fin.ele[0].valu<<' '<<fin.ele[1].valu<<' '<<fin.ele[2].valu<<'\n';
             int low=0,high=fin.size;
             while(low<high){
+
                 //if(fin.leaf)break;
                 int mid=(low+high)>>1;
                 if(k.index<fin.ele[mid].index){
@@ -856,4 +858,4 @@ public:
 
 };
 
-#endif //B_TREE_B_TREE_H
+#endif //CODE_B_TREE_H
