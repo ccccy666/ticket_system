@@ -4,15 +4,15 @@
 #include <iostream>
 #include<cstring>
 #include<iomanip>
-#include "b+ tree.h"
-#include "b+ tree__.h"
+#include "b+tree.h"
+#include "b+tree__.h"
 #include"Account.h"
 //#include "link.h"
 
 using std::string;
 class trainID {
 public:
-    char trainid[22];
+    char trainid[25];
 
     trainID() {
         trainid[0] = '\0';
@@ -30,6 +30,8 @@ public:
     trainID(const trainID &other) {
         strcpy(trainid, other.trainid);
     }
+
+
 
     bool operator==(const trainID &other) const {
         return (!strcmp(trainid, other.trainid));
@@ -60,10 +62,13 @@ public:
 
 class station_name {
 public:
-    char name[22];
-    int num = 0;
+    char name[35];
+    int num ;
 
-    station_name() {};
+    station_name() {
+        name[0]='\0';
+        num=0;
+    };
 
     station_name(std::string &in) {
         //if(in.size()>30)error("Invalid");
@@ -112,15 +117,18 @@ public:
 //};
 class timepoint {
 public:
-    char date[8];
+    char date[10];
     int hour;
     int min;
 
-    timepoint() {};
+    timepoint() {
+        hour=0,min=0;
+        date[0]='\0';
+    };
 
     timepoint(std::string &in) {
         //if(in.size()>30)error("Invalid");
-        int d;
+        int d=0;
         bool fl = 0;
         for (int i = 0; i < in.size(); i++) {
             date[i] = in[i];
@@ -179,11 +187,15 @@ public:
     int month;
     int day;
 
-    saleDate() {};
+    saleDate() {
+        date[0]='\0';
+        month=0;
+        day=0;
+    };
 
     saleDate(std::string &in) {
         //if(in.size()>30)error("Invalid");
-        int d;
+        int d=0;
         bool fl = 0;
         for (int i = 0; i < in.size(); i++) {
             date[i] = in[i];
@@ -273,10 +285,13 @@ public:
         else return 31;
     }
 
-    Time() {}
+    Time() {
+        month_=day_=hour_=min=0;
+    }
 
     Time(int month, int day, int hour, int minute) : month_(month), day_(day), hour_(hour), min(minute) {}
 
+    ~Time(){}
 
     std::string toString() const {
         std::ostringstream oss;
@@ -403,20 +418,88 @@ public:
 
 
 };
-//class Date{
-//public:
-//    saleDate sd;
-//    timepoint tp;
-//    Date(){};
-//    Date(string &t1,string &t2):sd(t1),tp(t2){}
-//    Date(Date &other):sd(other.sd),tp(other.tp){}
-//
-//};
+
+
+class train_seat{
+public:
+    trainID id;
+    int d;
+    //int max;
+    train_seat():id(){
+        d=0;
+    };
+    train_seat(const train_seat&other):id(other.id){
+        d=other.d;
+    }
+    bool operator<(const train_seat &other) const {
+        return (id < other.id)||(id==other.id&&d<other.d);
+    }
+
+    bool operator==(const train_seat &other) const {
+        return id == other.id&&d==other.d;
+    }
+
+    bool operator>(const train_seat &other) const {
+        return (id > other.id)||(id==other.id&&d>other.d);
+    }
+};
+
+class seat{
+public:
+    trainID id;
+    int sea[105];
+    int num;//站数
+    int max;
+    //int d;
+    seat():id(){
+        memset(sea,0,sizeof(sea));
+        num=0;
+        max=0;
+    }
+    seat(const seat &other){
+        id=other.id;
+        num=other.num;
+        max=other.max;
+        //d=other.d;
+        //for(int i=1;i<=d+1;i++){
+            for(int j=1;j<num;j++){
+                sea[j]=other.sea[j];
+            }
+        }
+    //}
+    bool operator<(const seat &other) const {
+        return (id < other.id);
+    }
+
+    bool operator==(const seat &other) const {
+        return id == other.id;
+    }
+
+    bool operator>(const seat &other) const {
+        return id > other.id;
+    }
+};
+
+class seats{
+public:
+
+    b_plus_tree<train_seat,seat>tr;
+    seats():tr("seats"){}
+    void insert(point<train_seat,seat> &ele){
+        tr.insert(ele);
+    }
+    seat find(train_seat &id){
+        return tr.find(id);
+    };
+    block<train_seat,seat> get_block(train_seat &id){
+        return tr.getblock(id);
+    }
+};
 
 class train {
 public:
     int station_num;
-    int seats[105][105];
+    //int seats[105][105];
     station_name name[105];
     trainID id;
     int price[105];
@@ -430,13 +513,23 @@ public:
     char type;
     bool released = 0;
 
-    train() {}
+    train():id(),startTime(),finishsale(),startsale() {
+        //id.trainid[0]='\0';
+        memset(price,0,sizeof(price));
+        memset(travelTime,0,sizeof(travelTime));
+        memset(stopTime,0,sizeof(stopTime));
+        station_num=0;
+        type='\0';
+//        for(int i=0;i<105;i++){
+//            name[i]();
+//        }
+    }
 
     train(const train &other) : startsale(other.startsale), finishsale(other.finishsale), id(other.id),
                                 startTime(other.startTime) {
         station_num = other.station_num;
-
-        for (int i = 1; i <= station_num - 1; i++) {
+        price[0]=other.price[0];
+        for (int i = 0; i <= station_num - 1; i++) {
             name[i] = other.name[i];
 //            if(i>=1){
 //
@@ -446,11 +539,12 @@ public:
             price[i] = other.price[i];
 
         }
-        for(int i=1;i<=finishsale-startsale+1;i++){
-            for(int j=1;j<=station_num-1;j++){
-                seats[i][j] = other.seats[i][j];
-            }
-        }
+        name[station_num]=other.name[station_num];
+//        for(int i=1;i<=finishsale-startsale+1;i++){
+//            for(int j=1;j<=station_num-1;j++){
+//                seats[i][j] = other.seats[i][j];
+//            }
+//        }
 
         type = other.type;
         released = other.released;
@@ -472,35 +566,50 @@ public:
 };
 
 struct output1 {
-    int seat;
+    int seat=0;
     string s;
-    int time;
-    int cost;
+    int time=0;
+    int cost=0;
     trainID id;
-
+//    output1():id(){
+//        seat=0;
+//        s="";
+//        time=0;
+//        cost=0;
+//    }
     bool operator<(const output1 &other) {
         return (time < other.time) || (time == other.time && id < other.id);
     }
 };
 
 struct output2 {
-    int seat;
+    int seat=0;
     string s;
-    int cost;
+    int cost=0;
     trainID id;
-
+//    output2():id(){
+//        seat=0;
+//        s="";
+//        cost=0;
+//    }
     bool operator<(const output2 &other) {
         return (cost < other.cost) || (cost == other.cost && id < other.id);
     }
 };
 
 struct out1 {
-    int time;
-    int cost=1e8;
-    int cost1, cost2;
+    int time=1e5+5;
+    int cost=0;
+    int cost1=0, cost2=0;
     trainID id1, id2;
     string s1, s2;
-    int seat1,seat2;
+    int seat1=0,seat2=0;
+//    out1():id1(),id2(){
+//        time=0;
+//        cost1=cost2=0;
+//        s1=s2="";
+//        seat1=seat2=0;
+//    }
     bool operator<(const out1 &other) const{
         return (time < other.time) || (time == other.time && cost < other.cost) ||
                                        (time == other.time && cost == other.cost && id1 < other.id1) ||
@@ -511,12 +620,18 @@ struct out1 {
 
 
 struct out2 {
-    int time=1e5;
-    int cost;
-    int cost1, cost2;
+    int time=0;
+    int cost=1e8;
+    int cost1=0, cost2=0;
     trainID id1, id2;
     string s1, s2;
-    int seat1,seat2;
+    int seat1=0,seat2=0;
+//    out2():id1(),id2(){
+//        cost=0;
+//        cost1=cost2=0;
+//        s1=s2="";
+//        seat1=seat2=0;
+//    }
     bool operator<(const out2 &other) const{
         return (cost < other.cost) || (cost == other.cost && time < other.time) ||
                (time == other.time && cost == other.cost && id1 < other.id1) ||
@@ -527,7 +642,7 @@ struct out2 {
 class ticket_information{
 public:
     int d;
-    int time=0;
+    int time;
     int from,to;
     char status[20];
     trainID id;
@@ -536,7 +651,15 @@ public:
     char describe[150];
     int price;
     int num;
-    ticket_information(){};
+    ticket_information():id(),uid(),date(){
+        time=0;
+        d=0;
+        from=to=0;
+        status[0]='\0';
+        describe[0]='\0';
+        price=0;
+        num=0;
+    };
     ticket_information(const ticket_information&other):id(other.id),uid(other.uid),date(other.date){
         strcpy(status,other.status);
         strcpy(describe,other.describe);
@@ -546,6 +669,7 @@ public:
         d=other.d;
         from=other.from;to=other.to;
     }
+    ~ticket_information(){}
     bool operator<(const ticket_information& other)const{
         return time<other.time;
     }
@@ -562,6 +686,7 @@ class order{
 public:
     b_plus_tree_<user_id,ticket_information> tr;
     order():tr("order"){}
+    ~order(){}
     void insert(point_<user_id,ticket_information> &el){
         tr.insert(el);
     }
@@ -569,10 +694,77 @@ public:
         return tr.exist(uid);
     }
     void queryorder(user_id &uid){
-        tr.find(uid);
+        tr.findd(uid);
     }
     void clear(){
         tr.root=tr.total=-1;
+    }
+    void change(user_id &uid,int time){
+        point_<user_id,ticket_information>k(uid,ticket_information());
+        //k.valu.time=time;
+        //bool flag=0,fla=0;
+        //compare cp;
+        block_<user_id,ticket_information> fin;
+//        if(tr.root==-1){
+//            printf("-1\n");
+//            return 0;
+//
+//        }
+        //cout<<root<<'\n';
+        tr.myread(tr.root,fin);
+        //cout<<fin.ele[1].valu;
+        while(!fin.leaf){
+            //cout<<fin.size<<' '<<fin.ele[0].valu<<' '<<fin.ele[1].valu<<' '<<fin.ele[2].valu<<'\n';
+            int low=0,high=fin.size;
+            while(low<high){
+                //if(fin.leaf)break;
+                int mid=(low+high)>>1;
+                if(k<fin.ele[mid]){
+                    high=mid;
+                }else{
+                    low=mid+1;
+                }
+            }
+            //cout<<low;
+            tr.myread(fin.pos[low],fin);
+        }
+        //cout<<fin.ele[2].valu<<' '<<fin.ele[1].valu<<'\n';
+
+//        if(k.index<fin.mini.index){
+//
+//            printf("-1\n");
+//            return 0;
+//        }
+        //int tmp=1;
+        //sjtu::vector<ticket_information>v;
+
+        //int siz=fin.size;
+        //cout<<fin.ele[0].valu<<fin.ele[1].valu;
+        for(int i=0;i<fin.size;i++){
+            //cout<<fin.ele[0].valu<<' ';
+            //if(k<fin.ele[i])break;
+            if(fin.ele[i].index==k.index&&fin.ele[i].valu.time==time){
+                //flag=1;
+                string f="success";
+                strcpy(fin.ele[i].valu.status,f.c_str());
+                tr.mywrite(fin.place,fin);
+                break;
+            }
+            if(i==fin.size-1&&fin.next!=-1){
+                    //cout<<fin.next;
+                    tr.myread(fin.next,fin);
+                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
+                    i=-1;
+                    //siz=fin.size;
+                }
+//            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
+//                tr.myread(fin.next,fin);
+//                fla=1;
+//                i=-1;
+//            }
+
+        }
+//
     }
     bool refund_ticket(user_id &uid,int num,ticket_information &infor){
         point_<user_id,ticket_information>k(uid,ticket_information());
@@ -631,11 +823,11 @@ public:
                     //siz=fin.size;
                 }
             }
-//            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
-//                myread(fin.next,fin);
-//                fla=1;
-//                i=-1;
-//            }
+            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
+                tr.myread(fin.next,fin);
+                fla=1;
+                i=-1;
+            }
 
         }
         if(!flag||num>v.size()){
@@ -656,17 +848,22 @@ public:
                     tmp++;
                 }
                 string sss="refunded";
-                for(int i=0;i<sss.size();i++){
-                    blk.ele[tmp].valu.status[i]=sss[i];
-                }
-                blk.ele[tmp].valu.status[sss.size()]='\0';
+                strcpy(blk.ele[tmp].valu.status,sss.c_str());
+//                for(int i=0;i<sss.size();i++){
+//                    blk.ele[tmp].valu.status[i]=sss[i];
+//                }
+//                blk.ele[tmp].valu.status[sss.size()]='\0';
                 tr.mywrite(blk.place,blk);
+                printf("0\n");
                 if(ss=="success"){
                     //todo
                     return 1;
+                }else{
+                    return 0;
                 }
             }
-
+            printf("-1\n");
+            return 0;
             //return 1;
 //            printf("%d\n",v.size());
 //            for(int i=0;i<v.size();i++){
@@ -679,7 +876,7 @@ class pending{
 public:
     int d;//距离首发车的天数
     int from,to;
-    int time=0;
+    int time;
     //char status[20];
     trainID id;
     user_id uid;
@@ -687,7 +884,14 @@ public:
     //char describe[150];
     int price;
     int num;
-    pending(){};
+    pending():id(),uid(),date(){
+        time=0;
+        d=0;
+        from=to=0;
+        price=0;
+        num=0;
+    };
+    ~pending(){}
     pending(const pending&other):id(other.id),uid(other.uid),date(other.date){
         //strcpy(status,other.status);
         //strcpy(describe,other.describe);
@@ -708,83 +912,20 @@ class pendings{
 public:
     b_plus_tree_<trainID,pending>tr;
     pendings():tr("pending"){}
+    ~pendings(){}
     void insert(point_<trainID,pending> &el){
         tr.insert(el);
     }
     bool exist(trainID &id){
         return tr.exist(id);
     }
-    bool refresh(saleDate &date,int from,int to,trainID &id,int d,int num,pending &pen){
-        point_<trainID,pending>k(id,pending());
-        bool flag=0,fla=0;
-        bool update=0;
-        //compare cp;
-        block_<trainID,pending> fin;
-        if(tr.root==-1){
-            printf("-1\n");
-            return 0;
-
-        }
-        //cout<<root<<'\n';
-        tr.myread(tr.root,fin);
-        //cout<<fin.ele[1].valu;
-        while(!fin.leaf){
-            //cout<<fin.size<<' '<<fin.ele[0].valu<<' '<<fin.ele[1].valu<<' '<<fin.ele[2].valu<<'\n';
-            int low=0,high=fin.size;
-            while(low<high){
-                //if(fin.leaf)break;
-                int mid=(low+high)>>1;
-                if(k<fin.ele[mid]){
-                    high=mid;
-                }else{
-                    low=mid+1;
-                }
-            }
-            //cout<<low;
-            tr.myread(fin.pos[low],fin);
-        }
-        //cout<<fin.ele[2].valu<<' '<<fin.ele[1].valu<<'\n';
-
-        if(k.index<fin.mini.index){
-
-            printf("-1\n");
-            return 0;
-        }
-
-        for(int i=0;i<fin.size;i++){
-            //cout<<fin.ele[0].valu<<' ';
-            if(k.index<fin.ele[i].index)break;
-            if(fin.ele[i].index==k.index){
-                flag=1;
-                if(fin.ele[i].valu.date==date){
-
-                }
-
-
-                if(i==fin.size-1&&fin.next!=-1){
-                    //cout<<fin.next;
-                    tr.myread(fin.next,fin);
-                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
-                    i=-1;
-                    //siz=fin.size;
-                }
-            }
-            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
-                tr.myread(fin.next,fin);
-                fla=1;
-                i=-1;
-            }
-
-        }
-        return update;
-//        if(!flag)printf("-1\n");
-//        else {
-//            printf("%d\n",v.size());
-//            for(int i=0;i<v.size();i++){
-//                std::cout<<v[i]<<'\n';
-//            }
-//        }
+    void del(point_<trainID,pending> &el){
+        tr.del(el);
     }
+    void clear(){
+        tr.root=tr.total=-1;
+    };
+//
 };
 class All_train {
 public:
@@ -794,17 +935,18 @@ public:
     //linklist_<>
     All_train() : tr("train"), tr1("station") {}
 
-    ~All_train() {}
+    ~All_train() {
+
+    }
 
     bool exist(trainID &id) {
+        //std::cout<<id.trainid<<std::endl;
         return tr.exist(id);
+
     }
 
     void insert(train &acc) {
-        for (int i = 1; i <= acc.station_num; i++) {
-            point_<station_name, train> pp(acc.name[i], acc);
-            tr1.insert(pp);
-        }
+
         point<trainID, train> p(acc.id, acc);
         tr.insert(p);
     }
@@ -914,11 +1056,12 @@ public:
         delete[]b;
     }
 
-    void query_ticket(station_name &begin, station_name &end, saleDate &date, int mode) {
+    void query_ticket(station_name &begin, station_name &end, saleDate &date, int mode,seats &seat_,int notuse) {
+
         output1 ans1[10005];
         output2 ans2[10005];
         int cnt = 0;
-        bool flag1 = 0, flag2 = 0, fla1 = 0, fla2;
+        bool flag1 = 0, flag2 = 0, fla1 = 0, fla2=0;
         point_<station_name, train> first(begin, train()), second(end, train());
         block_<station_name, train> fin, finn;
         tr1.myread(tr1.root, fin);
@@ -958,27 +1101,73 @@ public:
             printf("0\n");
             return;
         }
+
         int i = 0, j = 0;
         for (; i < fin.size && j < finn.size; i++, j++) {
+//            if(notuse==37322){
+//                //block_<station_name,train>b;
+//                //tr1.myread(fin.next,b);
+//                //for(int e=0;e<fin.size;e++){
+//                    std::cout<<fin.ele[i].index.name<<' '<<fin.ele[i].valu.id.trainid<<' ';
+//                    std::cout<<finn.ele[j].index.name<<' '<<finn.ele[j].valu.id.trainid<<std::endl;
+//                //}
+//
+//            }
 //            //cout<<fin.ele[0].valu<<' ';
             if (first.index < fin.ele[i].index || second.index < finn.ele[j].index)break;
             if (fin.ele[i].index == first.index && finn.ele[j].index != second.index)i--;
             if (fin.ele[i].index != first.index && finn.ele[j].index == second.index)j--;
             if (fin.ele[i].index == first.index && finn.ele[j].index == second.index) {
-                flag1 = 1;
-                flag2 = 1;
+
 //                //cout<<1;
                 //printf("%d ",fin.ele[i].valu);
                 if (fin.ele[i].valu < finn.ele[j].valu) {
                     j--;
+                    if ((!flag1) && (!fla1) && i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        fla1 = 1;
+                        i = -1;
+                    }
+                    if (i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        i = -1;
+                    }
+
                     continue;
                 } else if (fin.ele[i].valu > finn.ele[j].valu) {
                     i--;
+                    if ((!flag2) && (!fla2) && j == finn.size - 1 && finn.next != -1) {
+                        tr1.myread(finn.next, finn);
+                        fla2 = 1;
+                        j = -1;
+                    }
+                    if (j == finn.size - 1 && finn.next != -1) {
+                        tr1.myread(finn.next, finn);
+                        j = -1;
+                    }
                     continue;
                 }
-                if (fin.ele[i].index.num >= finn.ele[j].index.num)continue;
+                flag1 = 1;
+                flag2 = 1;
+                if (fin.ele[i].index.num >= finn.ele[j].index.num){
+                    if (i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        i = -1;
+                    }
+                    if (j == finn.size - 1 && finn.next != -1) {
+                        //cout<<fin.next;
+                        tr1.myread(finn.next, finn);
+//                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
+                        j = -1;
+//                    //siz=fin.size;
+                    }
+                    continue;
+                }
+                //if(!fin.ele[i].valu.released)continue;
+
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
                 train tra = fin.ele[i].valu;
+
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
                 //int hour,min,month,day;
                 Time tim1(tra.startsale.month, tra.startsale.day, tra.startTime.hour, tra.startTime.min);
@@ -987,17 +1176,35 @@ public:
                 tim2 = tim2 + traveltime;//末班车
                 Time ti, t;//出发时间,到达时间
                 ti.month_ = date.month, ti.day_ = date.day;
-                ti.hour_ = tim1.hour_, ti.min = tim1.day_;
+                ti.hour_ = tim1.hour_, ti.min = tim1.min;
                 int d=(ti-tim1)/1440;
-                if (ti < tim1 || ti > tim2)continue;
+                if (ti < tim1 || ti > tim2){
+                    if (i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        i = -1;
+                    }
+                    if (j == finn.size - 1 && finn.next != -1) {
+                        //cout<<fin.next;
+                        tr1.myread(finn.next, finn);
+//                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
+                        j = -1;
+//                    //siz=fin.size;
+                    }
+                    continue;
+                }
+                train_seat ts;
+                ts.id=tra.id,ts.d=d;
+                seat se=seat_.find(ts);
                 string put;
                 traveltime = tra.travelTime[num2 - 1] - tra.travelTime[num1 - 1] + tra.stopTime[num2 - 1] -
                              tra.stopTime[num1];
                 t = ti + traveltime;
                 int price, seat = 1e5 + 5;
+                //std::cout<<num1<<' '<<num2<<std::endl;
+                //std::cout<<tra.price[num1 - 1]<<' '<<tra.price[num2 - 1]<<std::endl;
                 price = tra.price[num2 - 1] - tra.price[num1 - 1];
                 for (int k = num1; k < num2; k++) {
-                    seat = std::min(seat, tra.seats[d+1][k]);
+                    seat = std::min(seat, se.sea[k]);
                 }
                 put= getstr(begin,end,ti,t);
 
@@ -1012,11 +1219,8 @@ public:
                     i = -1;
                 }
                 if (j == finn.size - 1 && finn.next != -1) {
-                    //cout<<fin.next;
                     tr1.myread(finn.next, finn);
-//                    //cout<<fin.size<<' '<<fin.ele[0].valu<<'\n';
                     j = -1;
-//                    //siz=fin.size;
                 }
             }
             if ((!flag1) && (!fla1) && i == fin.size - 1 && fin.next != -1) {
@@ -1032,12 +1236,18 @@ public:
         }
         printf("%d\n", cnt);
         if (cnt == 0)return;
+//        if(notuse==44107){
+//            printf("%s %s %d %d\n", ans2[1].id.trainid, ans2[1].s.c_str(), ans2[1].cost, ans2[1].seat);
+//            printf("%s %s %d %d\n", ans2[2].id.trainid, ans2[2].s.c_str(), ans2[2].cost, ans2[2].seat);
+//        }
         if (mode == 1) {
+
             merge1(ans1, 1, cnt);
             for (int k = 1; k <= cnt; k++) {
                 printf("%s %s %d %d\n", ans1[k].id.trainid, ans1[k].s.c_str(), ans1[k].cost, ans1[k].seat);
             }
         } else {
+
             merge2(ans2, 1, cnt);
             for (int k = 1; k <= cnt; k++) {
                 printf("%s %s %d %d\n", ans2[k].id.trainid, ans2[k].s.c_str(), ans2[k].cost, ans2[k].seat);
@@ -1064,11 +1274,11 @@ public:
         return put;
     }
 
-    void query_transfer(station_name &begin, station_name &end, saleDate &date, int mode) {
+    void query_transfer(station_name &begin, station_name &end, saleDate &date, int mode,seats &seat_,int notuse) {
         out1 ans1;
         out2 ans2;
         int cnt = 0;
-        bool flag1 = 0, flag2 = 0, fla1 = 0, fla2=0;
+        bool flag1 = 0, fla1 = 0;
         point_<station_name, train> first(begin, train());
         //point_<station_name, train> second(end, train());
         block_<station_name, train> fin;
@@ -1090,12 +1300,14 @@ public:
             printf("0\n");
             return;
         }
-        int i = 0, j = 0;
+        int i = 0,j=0;
 
         for (i = 0; i < fin.size; i++) {
             if (first.index < fin.ele[i].index)break;
             if (first.index == fin.ele[i].index) {
                 train tra = fin.ele[i].valu;
+
+
                 int num1 = fin.ele[i].index.num;
                 flag1 = 1;
                 Time tim1(tra.startsale.month, tra.startsale.day, tra.startTime.hour, tra.startTime.min);
@@ -1105,42 +1317,62 @@ public:
                 tim2 = tim2 + traveltime;//末班车
                 Time ti,t;
                 ti.month_ = date.month, ti.day_ = date.day;
-                ti.hour_ = tim1.hour_, ti.min = tim1.day_;
-                if (ti < tim1||ti > tim2)continue;
+                ti.hour_ = tim1.hour_, ti.min = tim1.min;
+                if (ti < tim1||ti > tim2){
+                    if (i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        i = -1;
+                    }
+                    continue;
+                }
+                //if(!fin.ele[i].valu.released)continue;
+                int d=ti-tim1;
+                d/=1440;
+                train_seat ts;
+                ts.id=tra.id,ts.d=d;
+                seat se=seat_.find(ts);
+
                 for (j = num1+1; j <= tra.station_num; j++) {
                     station_name mid=tra.name[j];
                     traveltime=tra.travelTime[j-1]-tra.travelTime[num1-1]+tra.stopTime[j-1]-tra.stopTime[num1];
                     t=ti+traveltime;
-                    int price, seat = 1e5 + 5;
+                    int price, seatt = 1e5 + 5;
                     price = tra.price[j - 1] - tra.price[num1 - 1];
-                    int d=ti-tim1;
-                    d/=1440;
-                    for (int k = num1; k < j; k++) {
-                        seat = std::min(seat, tra.seats[d+1][k]);
-                    }
+
+                    seatt = std::min(seatt, se.sea[j-1]);
+//                    for (int k = num1; k < j; k++) {
+//
+//                    }
                     out1 an1;
                     out2 an2;
                     string put= getstr(begin,mid,ti,t);
+
                     if(mode==1){
                         an1.time=traveltime;
                         an1.cost=price;
                         an1.id1=tra.id;
                         an1.cost1=price;
                         an1.s1=put;
-                        an1.seat1=seat;
+                        an1.seat1=seatt;
                     }else{
                         an2.time=traveltime;
                         an2.cost=price;
                         an2.id1=tra.id;
                         an2.cost1=price;
                         an2.s1=put;
-                        an2.seat1=seat;
+                        an2.seat1=seatt;
                     }
-                    int num=find_transfer(mid,end,t,mode,an1,an2);
+                    int num=find_transfer(mid,end,t,mode,an1,an2,seat_,notuse);
+
                     cnt+=num;
                     if(num!=0){
                         if(mode==1){
                             ans1=std::min(ans1,an1);
+//                            if(notuse==29538){
+//                                std::cout<<ans1.time<<' '<<an1.time<<std::endl;
+//                                printf("%s %s %d %d\n",an1.id1.trainid,an1.s1.c_str(),an1.cost1,an1.seat1);
+//                                printf("%s %s %d %d\n",an1.id2.trainid,an1.s2.c_str(),an1.cost2,an1.seat2);
+//                            }
                         }else{
                             ans2=std::min(ans2,an2);
                         }
@@ -1173,7 +1405,7 @@ public:
 
 
     }
-    int find_transfer(station_name &begin, station_name &end, Time &date, int mode,out1 &ans1,out2 &ans2) {
+    int find_transfer(station_name &begin, station_name &end, Time &date, int mode,out1 &ans1,out2 &ans2,seats &seat_,int notuse) {
         //long long pri
         int cnt = 0;
         //bool fl=0;
@@ -1215,28 +1447,60 @@ public:
             //printf("0\n");
             return 0;
         }
-        int i = 0, j = 0;
+        int i = 0, j = 0 ;
         for (; i < fin.size && j < finn.size; i++, j++) {
 //            //cout<<fin.ele[0].valu<<' ';
             if (first.index < fin.ele[i].index || second.index < finn.ele[j].index)break;
+
             if (fin.ele[i].index == first.index && finn.ele[j].index != second.index)i--;
             if (fin.ele[i].index != first.index && finn.ele[j].index == second.index)j--;
             if (fin.ele[i].index == first.index && finn.ele[j].index == second.index) {
-                flag1 = 1;
-                flag2 = 1;
+
 //                //cout<<1;
                 //printf("%d ",fin.ele[i].valu);
                 if (fin.ele[i].valu < finn.ele[j].valu) {
                     j--;
+                    if ((!flag1) && (!fla1) && i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        fla1 = 1;
+                        i = -1;
+                    }
+                    if (i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        i = -1;
+                    }
+
                     continue;
                 } else if (fin.ele[i].valu > finn.ele[j].valu) {
                     i--;
+                    if ((!flag2) && (!fla2) && j == finn.size - 1 && finn.next != -1) {
+                        tr1.myread(finn.next, finn);
+                        fla2 = 1;
+                        j = -1;
+                    }
+                    if (j == finn.size - 1 && finn.next != -1) {
+                        tr1.myread(finn.next, finn);
+                        j = -1;
+                    }
                     continue;
                 }
-                if (fin.ele[i].index.num >= finn.ele[j].index.num)continue;
+                flag1 = 1;
+                flag2 = 1;
+                if (fin.ele[i].index.num >= finn.ele[j].index.num||fin.ele[i].valu.id==ans1.id1||fin.ele[i].valu.id==ans2.id1){
+                    if (i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        i = -1;
+                    }
+                    if (j == finn.size - 1 && finn.next != -1) {
+
+                        tr1.myread(finn.next, finn);
+                        j = -1;
+                    }
+                    continue;
+                }
+                //if(!fin.ele[i].valu.released)continue;
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
                 train tra = fin.ele[i].valu;
-
 
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
                 //int hour,min,month,day;
@@ -1247,19 +1511,23 @@ public:
                 Time ti, t;//出发时间,到达时间
                 //ti=date;//前一趟车到站时间
                 ti.month_ = date.month_, ti.day_ = date.day_;
-                ti.hour_ = tim1.hour_, ti.min = tim1.day_;
-                //int wait;
-
+                ti.hour_ = tim1.hour_, ti.min = tim1.min;
+                //int wait=0;
+                //Time wait;
                 if (date > tim2){
                     continue;//要找的那一天晚于末班车
                 }else if(date<tim1){
+                    //wait=tim1-date;
                     ti=tim1;
                     //fl=1;
                     //wait=tim1-date;//前一辆车到换乘站时间太早
-                }else if(ti<date) {
+                }else if(ti<date) {//ti是那趟车在date当天离开的时间
 //                    fl=1;
 //                    wait=date-ti;
                     ti = ti + 1440;
+                    //wait=ti-date;
+                }else{
+                    //wait=date-ti;
                 }
 //                }else {
 //                    continue;/////////////////////
@@ -1270,32 +1538,36 @@ public:
                 t = ti + traveltime;
 
                 int d=ti-tim1;
+                d/=1440;
+                train_seat ts;
+                ts.id=tra.id;ts.d=d;
+                seat se=seat_.find(ts);
 
-
-                int price, seat = 1e5 + 5;
+                int price, seatt = 1e5 + 5;
                 price = tra.price[num2 - 1] - tra.price[num1 - 1];
                 for (int k = num1; k < num2; k++) {
-                    seat = std::min(seat, tra.seats[d+1][k]);
+                    seatt = std::min(seatt, se.sea[k]);
                 }
                 put= getstr(begin,end,ti,t);
-                traveltime+=ti-date;
+                if(ti>=date)traveltime+=ti-date;
+                else traveltime+=date-ti;
                 //else traveltime+=wait;
                 if (mode == 1) {
                     if(cnt==0){
-                        ans1.time+=traveltime;
+                        ans1.time+=(traveltime);
                         ans1.cost+=price;
                         ans1.cost2=price;
                         ans1.s2=put;
                         ans1.id2=tra.id;
-                        ans1.seat2=seat;
+                        ans1.seat2=seatt;
                     }else{
                         out1 a1=ans1;
-                        a1.time+=traveltime;
+                        a1.time+=(traveltime);
                         a1.cost+=price;
                         a1.s2=put;
                         a1.cost2=price;
                         a1.id2=tra.id;
-                        a1.seat2=seat;
+                        a1.seat2=seatt;
                         ans1=std::min(a1,ans1);
                     }
 
@@ -1306,7 +1578,7 @@ public:
                         ans2.cost2=price;
                         ans2.s2=put;
                         ans2.id2=tra.id;
-                        ans2.seat2=seat;
+                        ans2.seat2=seatt;
                     }else{
                         out2 a2=ans2;
                         a2.time+=traveltime;
@@ -1314,7 +1586,7 @@ public:
                         a2.s2=put;
                         a2.cost2=price;
                         a2.id2=tra.id;
-                        a2.seat2=seat;
+                        a2.seat2=seatt;
                         ans2=std::min(a2,ans2);
                     }
                 }
@@ -1343,11 +1615,11 @@ public:
         return cnt;
 
     }
-    int buy_ticket(int tt,station_name &begin,station_name &end,int num,train &trai,bool flag,saleDate &date,string &put,long long &price,ticket_information &in){
+    int buy_ticket(seats &seat_,int tt,station_name &begin,station_name &end,int num,train &trai,bool flag,saleDate &date,string &put,long long &price,ticket_information &in){
         //bool flag1 = 0, flag2 = 0, fla1 = 0, fla2=0;
 
         bool find=0,pend=0;
-        long long pri;
+        long long pri=0;
         point_<station_name, train> first(begin, trai), second(end, trai);
         block_<station_name, train> fin, finn;
         tr1.myread(tr1.root, fin);
@@ -1380,24 +1652,33 @@ public:
             tr1.myread(finn.pos[low], finn);
         }
         if (first.index < fin.mini.index || second.index < finn.mini.index) {
+
             printf("-1\n");
             return 0;
         }
+        //std::cout<<fin.place<<' '<<finn.place<<std::endl;
         int i = 0, j = 0;
+//        for(int e=0;e<fin.size;e++){
+
+//        }
         for (; i < fin.size && j < finn.size; i++, j++) {
-            if (first < fin.ele[i] || second < finn.ele[j])break;
+//            std::cout<<fin.ele[i].index.name<<' '<<fin.ele[i].valu.id.trainid<<' ';
+//            std::cout<<finn.ele[j].index.name<<' '<<finn.ele[j].valu.id.trainid<<std::endl;
+            //std::cout<<fin.ele[i].index.name<<' '<<finn.ele[j].index.name<<std::endl;
+            if (first < fin.ele[i] || second < finn.ele[j]){
+
+                //std::cout<<first.index.name<<' '<<second.index.name<<std::endl;
+
+                break;
+            }
             if (fin.ele[i] == first && finn.ele[j] < second)i--;
             if (fin.ele[i] < first && finn.ele[j] == second)j--;
             if (fin.ele[i] == first && finn.ele[j] == second) {
 
-//                if (fin.ele[i].valu < finn.ele[j].valu) {
-//                    j--;
-//                    continue;
-//                } else if (fin.ele[i].valu > finn.ele[j].valu) {
-//                    i--;
-//                    continue;
-//                }
-                if (fin.ele[i].index.num >= finn.ele[j].index.num)break;
+                if (fin.ele[i].index.num >= finn.ele[j].index.num){
+
+                    break;
+                }
 
 //                flag1 = 1;
 //                flag2 = 1;
@@ -1407,46 +1688,87 @@ public:
 
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
                 //int hour,min,month,day;
+                //std::cout<<traveltime<<std::endl;
                 Time tim1(tra.startsale.month, tra.startsale.day, tra.startTime.hour, tra.startTime.min);
                 Time tim2(tra.finishsale.month, tra.finishsale.day, tra.startTime.hour, tra.startTime.min);
+
+                //std::cout<<ti.month_<<' '<<ti.day_<<std::endl;
+                //std::cout<<tim2.month_<<' '<<tim2.day_<<std::endl;
                 tim1 = tim1 + traveltime;//首班车从站1离开时间
                 tim2 = tim2 + traveltime;//末班车
                 Time ti, t;//出发时间,到达时间
                 //ti=date;//前一趟车到站时间
                 ti.month_ = date.month, ti.day_ = date.day;
-                ti.hour_ = tim1.hour_, ti.min = tim1.day_;
-                //int wait;
-                if(ti<tim1||ti>tim2)break;
-                find=1;
+                ti.hour_ = tim1.hour_, ti.min = tim1.min;
+                //std::cout<<tim1.month_<<' '<<tim1.day_<<' '<<tim1.hour_<<' '<<tim1.min<<std::endl;
+                //std::cout<<tim1.month_<<' '<<tim1.day_<<std::endl;
+                //std::cout<<ti.month_<<' '<<ti.day_<<' '<<ti.hour_<<' '<<ti.min<<std::endl;
+                //std::cout<<tim2.month_<<' '<<tim2.day_<<std::endl;
+                if(ti<tim1||ti>tim2){
+
+                    //std::cout<<fin.ele[i].valu.price[2]<<' '<<finn.ele[j].valu.price[2];
+                    break;
+                }
+
                 Time mid=ti;
                 mid=mid-traveltime;
                 date.month=mid.month_,date.day=mid.day_;
-                int d=ti-tim1;
+                date.date[1]=date.month+'0';
+                date.date[3]=(date.day/10)+'0';
+                date.date[4]=(date.day%10)+'0';
+                int d=ti-tim1;//minutes
+                //in.date=date;
+                //in.
+                d/=1440;
+                train_seat ts;
+                ts.id=tra.id,ts.d=d;
+                seat se=seat_.find(ts);
+//                if(tt==97081){
+//                    for(int u=num1;u<num2;u++){
+//                        std::cout<<se.sea[u]<<std::endl;
+//                    }
+//
+//                }
+//                string f="INSCRIPTIONS";
+//                if(date.month==8&&date.day==15&& strcmp(f.c_str(),tra.id.trainid)==0){
+//                    for(int e=1;e<se.num;e++){
+//                        std::cout<<se.sea[e]<<std::endl;
+//                    }
+//                }
+                //std::cout<<ts.id.trainid<<' '<<se.id.trainid<<std::endl;
+                if(num>se.max){
+
+                    break;
+                }
+
                 in.d=d;
                  price=tra.price[num2-1]-tra.price[num1-1];
-                traveltime=tra.travelTime[num2-1]+tra.travelTime[num1-1]+tra.stopTime[num2-1]-tra.stopTime[num1];
+                traveltime=tra.travelTime[num2-1]-tra.travelTime[num1-1]+tra.stopTime[num2-1]-tra.stopTime[num1];
+                //std::cout<<traveltime<<std::endl;
                 t=ti+traveltime;
-                int seat=1e5+5;
+                int seatt=1e5+5;
                 put= getstr(begin,end,ti,t);
                 for(int k=num1;k<num2;k++){
-                    seat=std::min(seat,tra.seats[d+1][k]);
+                    seatt=std::min(seatt,se.sea[k]);
                 }
-                if(seat>=num){
-                    block<trainID,train>blk=tr.getblock(tra.id);
+                //std::cout<<seatt<<' ';
+                if(seatt>=num){
+                    find=1;
+                    block<train_seat,seat>blk=seat_.tr.getblock(ts);
                     int tmp=0;
-                    for(int l=0;l<blk.size;i++){
-                        if(tra.id==blk.ele[l].index)break;
+                    for(int l=0;l<blk.size;l++){
+                        if(ts==blk.ele[l].index)break;
                         tmp++;
                     }
                     for(int k=num1;k<num2;k++){
                         //todo
-                        blk.ele[tmp].valu.seats[d+1][k]-=seat;
-                        tra.seats[d+1][k]-=seat;////////////
+                        blk.ele[tmp].valu.sea[k]-=num;
+                        //tra.seats[d+1][k]-=seat;////////////
 
 
                     }
-                    mywrite(blk);
-                    pri=price*seat;
+                    seat_.tr.mywrite(blk.place,blk);
+                    pri=price*num;
                 }else{
                     if(flag){
                         pend=1;
@@ -1463,20 +1785,11 @@ public:
 //                    j = -1;
 //                }
             }
-//            if ((!flag1) && (!fla1) && i == fin.size - 1 && fin.next != -1) {
-//                tr1.myread(fin.next, fin);
-//                fla1 = 1;
-//                i = -1;
-//            }
-//            if ((!flag2) && (!fla2) && j == finn.size - 1 && finn.next != -1) {
-//                tr1.myread(finn.next, finn);
-//                fla2 = 1;
-//                j = -1;
-//            }
+
         }
-        if(!find){
-            printf("-1\n");
-            return 0;
+        if(find){
+            std::cout<<pri<<'\n';
+            return 2;
         }else{
             if(pend){
                 printf("queue\n");
@@ -1484,10 +1797,11 @@ public:
                 //todo
                 return 1;
             }else{
-                std::cout<<pri<<'\n';
-                return 2;
+                printf("-1\n");
+                return 0;
             }
         }
+
 
     }
 };
