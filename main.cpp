@@ -57,8 +57,8 @@ void print(){
 }
 
 int main() {
-//    freopen("C:\\Users\\DELL\\Desktop\\b+tree\\in.txt","r",stdin);
-//    freopen("C:\\Users\\DELL\\Desktop\\b+tree\\out.txt", "w", stdout);
+    freopen("in1.txt","r",stdin);
+    freopen("1.txt", "w", stdout);
     //fclose(stdin);
     //fclose(stdout);
     sjtu::map<user_id, account> now_user;
@@ -70,22 +70,28 @@ int main() {
     seats seat_;
     order order_;
     pendings wait;
-    scanner scan;
+
     //int x=1;
 
 
     while (getline(std::cin, line)) {////////////////
         //std::cout<<1<<std::endl;
+        //if(line=="\n")continue;
+        op="",opp="";
+        scanner scan;
         bool flag=0;
         scan.setInput(line);
         op = scan.nextToken();
-        if(op==" "||op=="")break;
+        //std::cout<<all_ac.tr.root<<std::endl;
+        //if(op==" "||op=="")break;
         //return "bye";
         string  s ;
         for(int i=1;i<op.size()-1;i++){
             s+=op[i];
         }
+
         std::cout<<op<<' ';
+
         //printf("d ",tim);
         op = scan.nextToken();
         if (op == "add_user") {
@@ -101,7 +107,9 @@ int main() {
                     if (now_user.empty()) {
                         ac.privilege = 10;
                     } else {
+
                         ac.privilege = stringToInt(opp);
+                        //std::cout<<ac.privilege<<std::endl;
                         //std::cout<<opp;
                     }
                 } else if (op == "-c" && !now_user.empty()) {
@@ -126,6 +134,7 @@ int main() {
                     ac.id = opp;
 
                 } else if (op == "-p") {
+                    //std::cout<<opp<<std::endl;
                     stringTochar(opp, ac.password);
                 } else if (op == "-n") {
                     strcpy(ac.name,opp.c_str());
@@ -155,36 +164,48 @@ int main() {
 
                 }
             }
-            printf("0\n");
+
 //            strcpy(ac.name,mi.c_str());
 //            strcpy(ac.email,mid.c_str());
 //            string f="Estelle";
 //            if(strcmp(ac.id.userid,f.c_str())==0)std::cout<<ac.name<<'\n';
 
             all_ac.insert(ac);
+            printf("0\n");
         } else if (op == "login") {
             char word[42];
             account ac;
             user_id idd;
+
             while (scan.hasMoreTokens()) {
                 op = scan.nextToken();
                 opp = scan.nextToken();
                 if (op == "-u") {
                     idd = opp;
                     auto it=now_user.find(idd);
+                    //std::cout<<1<<std::endl;
+                    //all_ac.exist(idd);
+
                     if (!all_ac.exist(idd)||it!=now_user.end()) {
+
                         printf("-1\n");
                         flag=1;
                         break;
                     }
+
                     ac = all_ac.find(idd);
                 } else if (op == "-p") {
+
                     stringTochar(opp, word);
+                    //std::cout<<word<<std::endl;
                 }
 
             }
+
             if(flag)continue;
+            //std::cout<<op;
             if (strcmp(ac.password, word)) {
+
                 printf("-1\n");
                 //flag=1;
                 continue;
@@ -331,7 +352,7 @@ int main() {
                 }else if(op=="-n"){
                     tra.station_num= stringToInt(opp);
                 }else if(op=="-m"){
-                     seatt=stringToInt(opp);
+                    seatt=stringToInt(opp);
 //                    for(int i=1;i<104;i++){
 //                        tra.seats[i]=seat;
 //                    }
@@ -899,11 +920,12 @@ int main() {
             order_.clear();
             wait.clear();
             printf("0\n");
-        } else if (op == "exit") {
+        } else if (op == "exi") {
             //std::cout<<all_ac.tr.root;
+            //std::cout<<"bye"<<std::endl;
             printf("bye\n");
             break;
-        }
+        }else if(op==" ")break;
     }
 
     return 0;
