@@ -15,7 +15,7 @@ public:
     ~scanner(){}
     void setInput(string &line_){
         line=line_;
-        line.pop_back();
+        //line.pop_back();
         pos=0;
         //line=line-line[line.size()-1];
     }
