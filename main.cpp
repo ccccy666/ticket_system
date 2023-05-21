@@ -57,8 +57,8 @@ void print(){
 }
 
 int main() {
-    //freopen("in1.txt","r",stdin);
-    //freopen("1.txt", "w", stdout);
+    freopen("in1.txt","r",stdin);
+    freopen("1.txt", "w", stdout);
     //fclose(stdin);
     //fclose(stdout);
     sjtu::map<user_id, account> now_user;
@@ -70,7 +70,7 @@ int main() {
     seats seat_;
     order order_;
     pendings wait;
-    op="",opp="";
+    //op="",opp="";
     scanner scan;
     //int x=1;
 
@@ -449,14 +449,15 @@ int main() {
                 }
             }
             if(flag)continue;
-
+            tra.maxseat=seatt;
             printf("0\n");
+
             seat se;
             se.id=tra.id;
-            se.max=seatt;
+            se.max=tra.maxseat;
             se.num=tra.station_num;
             for(int j=1;j<=se.num-1;j++){
-                se.sea[j]=seatt;
+                se.sea[j]=tra.maxseat;
             }
 
             for(int i=0;i<=tra.finishsale-tra.startsale;i++){
@@ -468,7 +469,6 @@ int main() {
                 point<train_seat,seat>p(ts,se);
                 seat_.insert(p);
             }
-
 
             all_train.insert(tra);
             //std::cout<<all_train.tr.root<<' ';
@@ -488,10 +488,22 @@ int main() {
                 printf("-1\n");
             }else{
                 printf("0\n");
+                int d=tra.finishsale-tra.startsale;
+                train_seat ts;
+                ts.id=tra.id;
+                seat se;
+                se.id=tra.id;
+                for(int i=0;i<=d;i++){
+                    ts.d=i;
+
+                    point<train_seat,seat>pi(ts,se);
+                    seat_.tr.del(pi);
+                }
 //                for(int i=1;i<=tra.station_num;i++){
 //                    point_<station_name,train>pp(tra.name[i],tra);
 //                    all_train.del_(pp);
 //                }
+
                 point<trainID,train>p(id,tra);
                 all_train.del(p);
             }
@@ -523,6 +535,7 @@ int main() {
             if(blk.ele[tmp].valu.released==0){
                 blk.ele[tmp].valu.released=1;
                 tra.released=1;
+
 //                string f="INSCRIPTIONS";
 //                if(strcmp(tra.id.trainid,f.c_str())==0)std::cout<<tra.name[14].name<<std::endl;
                 for (int i = 1; i <= tra.station_num; i++) {
