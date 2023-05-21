@@ -508,7 +508,7 @@ public:
     int stopTime[105];
     saleDate startsale;
     saleDate finishsale;
-
+    int maxseat;
     //saleDate saledate[100];
     char type;
     bool released = 0;
@@ -519,6 +519,7 @@ public:
         memset(travelTime,0,sizeof(travelTime));
         memset(stopTime,0,sizeof(stopTime));
         station_num=0;
+        maxseat=0;
         type='\0';
 //        for(int i=0;i<105;i++){
 //            name[i]();
@@ -545,7 +546,7 @@ public:
 //                seats[i][j] = other.seats[i][j];
 //            }
 //        }
-
+        maxseat=other.maxseat;
         type = other.type;
         released = other.released;
     }
@@ -881,6 +882,7 @@ public:
     trainID id;
     user_id uid;
     saleDate date;
+    //int maxseat=0;
     //char describe[150];
     int price;
     int num;
@@ -890,6 +892,7 @@ public:
         from=to=0;
         price=0;
         num=0;
+        //maxseat=0;
     };
     ~pending(){}
     pending(const pending&other):id(other.id),uid(other.uid),date(other.date){
@@ -1407,6 +1410,8 @@ public:
     }
     int find_transfer(station_name &begin, station_name &end, Time &date, int mode,out1 &ans1,out2 &ans2,seats &seat_,int notuse) {
         //long long pri
+        out1 mid1=ans1;
+        out2 mid2=ans2;
         int cnt = 0;
         //bool fl=0;
         bool flag1 = 0, flag2 = 0, fla1 = 0, fla2=0;
@@ -1552,7 +1557,9 @@ public:
                 if(ti>=date)traveltime+=ti-date;
                 else traveltime+=date-ti;
                 //else traveltime+=wait;
+                out1 mm1=mid1;out2 mm2=mid2;
                 if (mode == 1) {
+
                     if(cnt==0){
                         ans1.time+=(traveltime);
                         ans1.cost+=price;
@@ -1561,14 +1568,20 @@ public:
                         ans1.id2=tra.id;
                         ans1.seat2=seatt;
                     }else{
-                        out1 a1=ans1;
-                        a1.time+=(traveltime);
-                        a1.cost+=price;
-                        a1.s2=put;
-                        a1.cost2=price;
-                        a1.id2=tra.id;
-                        a1.seat2=seatt;
-                        ans1=std::min(a1,ans1);
+                        mm1.time+=(traveltime);
+                        mm1.cost+=price;
+                        mm1.s2=put;
+                        mm1.cost2=price;
+                        mm1.id2=tra.id;
+                        mm1.seat2=seatt;
+//                        out1 a1=ans1;
+//                        a1.time+=(traveltime);
+//                        a1.cost+=price;
+//                        a1.s2=put;
+//                        a1.cost2=price;
+//                        a1.id2=tra.id;
+//                        a1.seat2=seatt;
+                        ans1=std::min(mm1,ans1);
                     }
 
                 } else {
@@ -1580,14 +1593,20 @@ public:
                         ans2.id2=tra.id;
                         ans2.seat2=seatt;
                     }else{
-                        out2 a2=ans2;
-                        a2.time+=traveltime;
-                        a2.cost+=price;
-                        a2.s2=put;
-                        a2.cost2=price;
-                        a2.id2=tra.id;
-                        a2.seat2=seatt;
-                        ans2=std::min(a2,ans2);
+                        mm2.time+=(traveltime);
+                        mm2.cost+=price;
+                        mm2.s2=put;
+                        mm2.cost2=price;
+                        mm2.id2=tra.id;
+                        mm2.seat2=seatt;
+//                        out2 a2=ans2;
+//                        a2.time+=traveltime;
+//                        a2.cost+=price;
+//                        a2.s2=put;
+//                        a2.cost2=price;
+//                        a2.id2=tra.id;
+//                        a2.seat2=seatt;
+                        ans2=std::min(mm2,ans2);
                     }
                 }
                 cnt++;
