@@ -40,7 +40,7 @@ public:
         while(line[pos]==' '){
             pos++;
         }
-        while(line[pos]!=' '&&line[pos]!='\0'&&line[pos]!='\n'){
+        while(line[pos]!=' '&&line[pos]!='\0'){
             //if(line[pos]<32||line[pos]==127)return "";
             ss+=line[pos];
             pos++;
@@ -54,7 +54,7 @@ public:
         while(line[k]==' '){
             k++;
         }
-        if(line[k]=='\0'||line[k]=='\n')return false;
+        if(line[k]=='\0')return false;
         return true;
     }
 };
