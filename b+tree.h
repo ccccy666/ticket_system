@@ -90,12 +90,27 @@ struct block {
 
     point<key, T> ele[121];
     int pos[121];//子树位置
+//    block(){}
+//    block(const block<key,T> &other){
+//        next=other.next;
+//        pre=other.pre;
+//        mini=other.mini;maxi=other.maxi;
+//        size=other.size;
+//        leaf=other.leaf;
+//        place=other.place;
+//        parent=other.parent;
+//        for(int i=0;i<size;i++){
+//            ele[i]=other.ele[i];
+//            pos[i]=other.pos[i];
+//        }
+//        pos[size]=other.pos[size];
+//    }
 };
 
 template<class key, class T>
 class b_plus_tree {
 public:
-    const int maxsize = 100, minsize = 50,m=101;
+    const int maxsize = 20, minsize = 10,m=21;
     int total=-1;
     sjtu::vector<int> vec;
     sjtu::vector<block<key,T>>ve;
@@ -131,6 +146,7 @@ public:
     }
 
     ~b_plus_tree() {
+        //std::cout<<666666<<std::endl;
         inout.seekp(0);
         inout.write(reinterpret_cast<char *>(&total), sizeof(total));
         inout.write(reinterpret_cast<char *>(&root), sizeof(root));
@@ -368,16 +384,22 @@ public:
 //
 //    }
     bool exist(key ke) {
+
         point<key,T>k(ke,T());
+        //std::cout<<11111<<std::endl;
         bool flag=0,fla=0;
         //compare cp;
+
         block<key,T> fin;
+
         if(root==-1){
+            //std::cout<<1<<' ';
+
 //            printf("%s\n","null");
             return flag;
 
         }
-        //cout<<root<<'\n';
+
         myread(root,fin);
         //cout<<fin.ele[1].valu;
         while(!fin.leaf){
@@ -396,6 +418,7 @@ public:
             myread(fin.pos[low],fin);
         }
         //cout<<fin.ele[2].valu<<' '<<fin.ele[1].valu<<'\n';
+
 
         if(k.index<fin.mini.index){
 
