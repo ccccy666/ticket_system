@@ -70,15 +70,15 @@ int main() {
     seats seat_;
     order order_;
     pendings wait;
-
+    op="",opp="";
+    scanner scan;
     //int x=1;
 
 
     while (getline(std::cin, line)) {////////////////
         //std::cout<<1<<std::endl;
         //if(line=="\n")continue;
-        op="",opp="";
-        scanner scan;
+
         bool flag=0;
         scan.setInput(line);
         op = scan.nextToken();
