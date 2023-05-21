@@ -3,8 +3,8 @@
 #include "b+tree.h"
 
 using std::string;
-#ifndef B_TREE_ACCOUNT_H
-#define B_TREE_ACCOUNT_H
+#ifndef CODE_ACCOUNT_H
+#define CODE_ACCOUNT_H
 class user_id{
 public:
     char userid[22];
@@ -110,4 +110,4 @@ public:
     };
 
 };
-#endif //B_TREE_ACCOUNT_H
+#endif //CODE_ACCOUNT_H
