@@ -105,9 +105,7 @@ public:
         tr.root=-1;
         tr.total=-1;
     }
-    void del(){
-
-    };
+    
 
 };
 #endif //CODE_ACCOUNT_H
