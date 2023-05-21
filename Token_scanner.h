@@ -1,7 +1,7 @@
 #include <iostream>
 
-#ifndef B_TREE_TOKEN_SCANNER_H
-#define B_TREE_TOKEN_SCANNER_H
+#ifndef CODE_TOKEN_SCANNER_H
+#define CODE_TOKEN_SCANNER_H
 using std::string;
 class scanner{
 public:
@@ -59,4 +59,4 @@ public:
     }
 };
 
-#endif //B_TREE_TOKEN_SCANNER_H
+#endif //CODE_TOKEN_SCANNER_H
