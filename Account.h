@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#include "b+ tree.h"
+#include "b+tree.h"
 
 using std::string;
 #ifndef B_TREE_ACCOUNT_H
@@ -20,6 +20,7 @@ public:
     user_id(const user_id &other){
         strcpy(userid,other.userid);
     }
+    ~user_id(){}
     bool operator==(const user_id &other)const{
         return (!strcmp(userid,other.userid));
     }
@@ -46,10 +47,14 @@ class account{
 public:
     user_id id;
     char password[32];
-    char name[12];
-    char email[32];
+    char name[20];
+    char email[42];
     int privilege=0;
-    account(){}
+    account():id(){
+        password[0]='\0';
+        name[0]='\0';
+        email[0]='\0';
+    }
     account(const account &other):id(other.id){
         strcpy(password,other.password);
         strcpy(name,other.name);
@@ -60,6 +65,12 @@ public:
     ~account(){}
     bool operator<(const account &other)const{
         return id<other.id;
+    }
+    bool operator==(const account &other)const{
+        return id==other.id;
+    }
+    bool operator!=(const account &other)const{
+        return !(id==other.id);
     }
 };
 
