@@ -103,7 +103,7 @@ struct block_ {
 template<class key, class T>
 class b_plus_tree_ {
 public:
-    const int maxsize = 100, minsize = 50,m=101;
+    const int maxsize = 20, minsize = 10,m=11;
     int total=-1;
     sjtu::vector<int> vec;
     sjtu::vector<block_<key,T>>ve;
@@ -524,7 +524,7 @@ public:
 
         if(k.index<fin.mini.index){
 
-            printf("-1\n");
+            printf("0\n");
             return;
         }
         int tmp=1;
@@ -549,20 +549,20 @@ public:
                     //siz=fin.size;
                 }
             }
-//            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
-//                myread(fin.next,fin);
-//                fla=1;
-//                i=-1;
-//            }
+            if((!flag)&&(!fla)&&i==fin.size-1&&fin.next!=-1){
+                myread(fin.next,fin);
+                fla=1;
+                i=-1;
+            }
 
         }
-        if(!flag)printf("-1\n");
-        else {
+//        if(!flag)printf("-1\n");
+//        else {
             printf("%d\n",v.size());
-            for(int i=0;i<v.size();i++){
+            for(int i=v.size()-1;i>=0;i--){
                 std::cout<<v[i]<<'\n';
             }
-        }
+        //}
     }
     bool refund(key ke,int num,T &infor){
         point_<key,T>k(ke,T());
