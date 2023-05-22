@@ -98,12 +98,30 @@ struct block_ {
 
     point_<key, T> ele[151];
     int pos[151];//子树位置
+    block_<key,T>(){
+
+    }
+    block_<key,T>(const block_<key,T>& other){
+        next=other.next;
+        pre=other.pre;
+        mini=other.mini;
+        maxi=other.maxi;
+        size=other.size;
+        leaf=other.leaf;
+        place=other.place;
+        parent=other.parent;
+        for(int i=0;i<size;i++){
+            ele[i]=other.ele[i];
+            pos[i]=other.pos[i];
+        }
+        pos[size]=other.pos[size];
+    }
 };
 
 template<class key, class T>
 class b_plus_tree_ {
 public:
-    const int maxsize = 20, minsize = 10,m=11;
+    const int maxsize = 120, minsize = 60,m=121;
     int total=-1;
     sjtu::vector<int> vec;
     sjtu::vector<block_<key,T>>ve;
