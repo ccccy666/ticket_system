@@ -1333,15 +1333,16 @@ public:
                 d/=1440;
                 train_seat ts;
                 ts.id=tra.id,ts.d=d;
+                
                 seat se=seat_.find(ts);
-
+                int seatt=1e5+5;
                 for (j = num1+1; j <= tra.station_num; j++) {
                     station_name mid=tra.name[j];
                     traveltime=tra.travelTime[j-1]-tra.travelTime[num1-1]+tra.stopTime[j-1]-tra.stopTime[num1];
                     t=ti+traveltime;
-                    int price, seatt = 1e5 + 5;
+                    int price;//seatt = 1e5 + 5;
                     price = tra.price[j - 1] - tra.price[num1 - 1];
-
+                    //if(notuse==556435&&d==26)std::cout<<se.sea[j-1]<<std::endl;
                     seatt = std::min(seatt, se.sea[j-1]);
 //                    for (int k = num1; k < j; k++) {
 //
@@ -1520,6 +1521,15 @@ public:
                 //int wait=0;
                 //Time wait;
                 if (date > tim2){
+                    if (i == fin.size - 1 && fin.next != -1) {
+                        tr1.myread(fin.next, fin);
+                        i = -1;
+                    }
+                    if (j == finn.size - 1 && finn.next != -1) {
+
+                        tr1.myread(finn.next, finn);
+                        j = -1;
+                    }
                     continue;//要找的那一天晚于末班车
                 }else if(date<tim1){
                     //wait=tim1-date;
@@ -1540,8 +1550,8 @@ public:
                 string put;
                 traveltime = tra.travelTime[num2 - 1] - tra.travelTime[num1 - 1] + tra.stopTime[num2 - 1] -
                              tra.stopTime[num1];
+                
                 t = ti + traveltime;
-
                 int d=ti-tim1;
                 d/=1440;
                 train_seat ts;
@@ -1741,6 +1751,7 @@ public:
                 d/=1440;
                 train_seat ts;
                 ts.id=tra.id,ts.d=d;
+                //if(notuse==501400)std::cout<<d<<' '<<<<std::endl;
                 seat se=seat_.find(ts);
 //                if(tt==97081){
 //                    for(int u=num1;u<num2;u++){
@@ -1779,6 +1790,7 @@ public:
                         if(ts==blk.ele[l].index)break;
                         tmp++;
                     }
+                    
                     for(int k=num1;k<num2;k++){
                         //todo
                         blk.ele[tmp].valu.sea[k]-=num;
@@ -1786,6 +1798,9 @@ public:
 
 
                     }
+                    // if(tt==501400){
+                    //     std::cout<<d<<' '<<blk.ele[tmp].index.d<<' '<<num1<<' '<<num2<<' '<<blk.ele[tmp].valu.sea[8]<<std::endl;
+                    // }
                     seat_.tr.mywrite(blk.place,blk);
                     pri=price*num;
                 }else{
