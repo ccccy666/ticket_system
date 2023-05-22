@@ -90,6 +90,25 @@ struct block {
 
     point<key, T> ele[121];
     int pos[121];//子树位置
+    block<key,T>(){
+        memset(pos,0,sizeof(pos));
+
+    }
+    block<key,T>(const block<key,T>& other){
+        next=other.next;
+        pre=other.pre;
+        mini=other.mini;
+        maxi=other.maxi;
+        size=other.size;
+        leaf=other.leaf;
+        place=other.place;
+        parent=other.parent;
+        for(int i=0;i<size;i++){
+            ele[i]=other.ele[i];
+            pos[i]=other.pos[i];
+        }
+        pos[size]=other.pos[size];
+    }
 //    block(){}
 //    block(const block<key,T> &other){
 //        next=other.next;
@@ -110,7 +129,7 @@ struct block {
 template<class key, class T>
 class b_plus_tree {
 public:
-    const int maxsize = 20, minsize = 10,m=21;
+    const int maxsize = 120, minsize = 60,m=121;
     int total=-1;
     sjtu::vector<int> vec;
     sjtu::vector<block<key,T>>ve;
@@ -703,6 +722,7 @@ public:
         balance_delete(first,second);
     }
     void balance_delete(block<key,T>&first,block<key,T>&second){
+        //std::cout<<1<<std::endl;
         block<key,T>tmp,tm,son,pa;
         if(first.parent!=-1){
             myread(second.parent,tmp);
