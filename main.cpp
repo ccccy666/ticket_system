@@ -646,7 +646,7 @@ int main() {
 
             }
             if(flag)continue;
-            int notuse= stringToInt(s);
+            int notuse= 0;
             if(!flagp)all_train.query_ticket(from,to,sd,1,seat_,notuse);
             else if(flagt)all_train.query_ticket(from,to,sd,1,seat_,notuse);
             else if(flagc)all_train.query_ticket(from,to,sd,2,seat_,notuse);
@@ -672,7 +672,7 @@ int main() {
                 }
 
             }
-            int notuse= stringToInt(s);
+            int notuse= 0;
             if(!flagp)all_train.query_transfer(from,to,sd,1,seat_,notuse);
             else if(flagt)all_train.query_transfer(from,to,sd,1,seat_,notuse);
             else if(flagc)all_train.query_transfer(from,to,sd,2,seat_,notuse);
