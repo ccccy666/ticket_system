@@ -1,4 +1,5 @@
 //#include <iostream>
+#pragma comment(linker, "/STACK:1024000000,1024000000")
 #include "Token_scanner.h"
 #include "Account.h"
 #include "Train.h"
@@ -57,8 +58,6 @@ void print(){
 }
 
 int main() {
-    //freopen("in1.txt","r",stdin);
-    //freopen("1.txt", "w", stdout);
     //fclose(stdin);
     //fclose(stdout);
     sjtu::map<user_id, account> now_user;
@@ -81,9 +80,12 @@ int main() {
 
         bool flag=0;
         scan.setInput(line);
+        //std::cout<<line<<std::endl;
         op = scan.nextToken();
+        //std::cout<<line<<std::endl;
+        //std::cout<<op<<
         //std::cout<<all_ac.tr.root<<std::endl;
-        //if(op==" "||op=="")break;
+        if(op==" "||op=="")break;
         //return "bye";
         string  s ;
         for(int i=1;i<op.size()-1;i++){
@@ -215,20 +217,26 @@ int main() {
 
             now_user[idd] = ac;
         } else if (op == "logout") {
+
             user_id _id;
             op = scan.nextToken();
             opp = scan.nextToken();
             _id = opp;
+            if(s=="7830015")std::cout<<opp<<std::endl;
             auto it = now_user.find(_id);
+            if(s=="7830015")std::cout<<opp<<std::endl;
             if (it == now_user.end()) {
+                if(s=="7830015")std::cout<<opp<<std::endl;
                 printf("-1\n");
                 continue;
 
                 //break;
             }
+            if(s=="7830015")std::cout<<opp<<std::endl;
             printf("0\n");
 
             now_user.erase(it);
+            if(s=="7830015")std::cout<<opp<<std::endl;
         } else if (op == "query_profile") {
             account ac;
             user_id _id, id;//_id查询者,id被查询者
@@ -600,14 +608,14 @@ int main() {
                     print();
                     printf("-> ");
                     printf("xx-xx xx:xx ");
-                    printf("%d x",tra.price[i-1]);
+                    printf("%d x\n",tra.price[i-1]);
                 }else{
                     print();
                     printf("-> ");//到站信息
                     traveltime=tra.stopTime[i]-tra.stopTime[i-1];
                     dealtime(traveltime);
                     print();
-                    printf("%d %d",tra.price[i-1],se.sea[i]);
+                    printf("%d %d\n",tra.price[i-1],se.sea[i]);
                 }
                 traveltime=tra.travelTime[i]-tra.travelTime[i-1];
                 dealtime(traveltime);
@@ -903,11 +911,11 @@ int main() {
                                 se.sea[l]-=pe.num;
                             }
 
-                            seat_.tr.mywrite(blk.place,blk);
+                            
                             //break;
                         }
                     }
-
+                    seat_.tr.mywrite(blk.place,blk);
 
                     if(i==fin.size-1&&fin.next!=-1){
                         //cout<<fin.next;
@@ -939,6 +947,8 @@ int main() {
             printf("bye\n");
             break;
         }else if(op==" ")break;
+        //std::cout<<666<<std::endl;
+        std::cout.flush();
     }
 
     return 0;
