@@ -516,7 +516,7 @@ public:
         //compare cp;
         block_<key,T> fin;
         if(root==-1){
-            printf("-1\n");
+            printf("0\n");
             return;
 
         }
