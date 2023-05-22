@@ -323,7 +323,7 @@ int main() {
                 tmp++;
             }//blk.ele[tmp].valu.password=ac.password;
             account a=now_user[_id];
-            if ((a!=ac&&a.privilege <= blk.ele[tmp].valu.privilege)||ac.privilege>a.privilege) {
+            if ((a!=ac&&a.privilege <= blk.ele[tmp].valu.privilege)||ac.privilege>=a.privilege) {
                 printf("-1\n");
                 continue;
             }
