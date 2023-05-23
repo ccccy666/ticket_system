@@ -767,24 +767,25 @@ int main() {
             order_.insert(ele);
         } else if (op == "query_order") {
             user_id uid;
-
+            //if(s=="819")std::cout<<1<<std::endl;
             op=scan.nextToken();
             opp=scan.nextToken();
             uid=opp;
             if(!all_ac.exist(uid)){
-
+            //if(s=="819")std::cout<<1<<std::endl;
                 printf("-1\n");
                 continue;
             }
             auto it=now_user.find(uid);
             if(it==now_user.end()){
-
+            //if(s=="819")std::cout<<1<<std::endl;
                 printf("-1\n");
                 continue;
             }
 //            if(s=="1132"){
 //                std::cout<<6666<<std::endl;
 //            }
+
             order_.queryorder(uid);
 
         } else if (op == "refund_ticket") {
@@ -808,9 +809,15 @@ int main() {
             if(flag)continue;
 
             ticket_information infor;
-            if(!order_.refund_ticket(uid,num,infor))continue;
+            int back=order_.refund_ticket(uid,num,infor);
+            if(!back)continue;
             //train tra;
             //string f="Bagpipe";
+            // if(back==2){
+            //     point_<trainID,pending> pp(infor.id,pending());
+            //     pp.valu.time=infor.time;
+            //     wait.tr.del(pp);////??????
+            // }
             int n= stringToInt(s);
 
             train_seat ts;
@@ -898,7 +905,7 @@ int main() {
                         if(seatt>=pe.num){
                             point_<trainID,pending> po(pe.id,pe);
                             wait.del(po);
-                            order_.change(pe.uid,pe.time);
+                            bool l=order_.change(pe.uid,pe.time);
 //                            blk=seat_.get_block(ts);
 //                            //tra=all_train.find(infor.id);
 //                            tmp=0;
@@ -906,11 +913,13 @@ int main() {
 //                                if(blk.ele[l].index==ts)break;
 //                                tmp++;
 //                            }
-                            for(int l=pe.from;l<pe.to;l++){
+                            if(l){
+                                for(int l=pe.from;l<pe.to;l++){
                                 blk.ele[tmp].valu.sea[l]-=pe.num;
                                 se.sea[l]-=pe.num;
                             }
-
+                            }
+                            
                             
                             //break;
                         }
