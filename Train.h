@@ -700,7 +700,7 @@ public:
     void clear(){
         tr.root=tr.total=-1;
     }
-    bool change(user_id &uid,int time){
+    void change(user_id &uid,int time){
         point_<user_id,ticket_information>k(uid,ticket_information());
         //k.valu.time=time;
         //bool flag=0,fla=0;
@@ -746,8 +746,7 @@ public:
             //if(k<fin.ele[i])break;
             if(fin.ele[i].index==k.index&&fin.ele[i].valu.time==time){
                 //flag=1;
-                string f="success";string fff="refunded";
-                if(strcmp(fff.c_str(),fin.ele[i].valu.status)==0)return 0;
+                string f="success";
                 strcpy(fin.ele[i].valu.status,f.c_str());
                 tr.mywrite(fin.place,fin);
                 break;
@@ -766,7 +765,6 @@ public:
 //            }
 
         }
-        return 1;
 //
     }
     int refund_ticket(user_id &uid,int num,ticket_information &infor){
