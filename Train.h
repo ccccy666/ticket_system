@@ -956,7 +956,7 @@ public:
     //string file;
     list<train>list_;
     b_plus_tree<trainID, int> tr;
-    b_plus_tree_<station_name, train> tr1;
+    b_plus_tree_<station_name, trainID> tr1;
     //linklist_<>
     Al_train() : tr("a_train"), tr1("a_station"), list_("a_train_list") {}
 
@@ -985,7 +985,7 @@ public:
         //return tra;
     }
 
-    void mywrite_(block_<station_name, train> &bk) {
+    void mywrite_(block_<station_name, trainID> &bk) {
         tr1.mywrite(bk.place, bk);
     }
 //
@@ -998,7 +998,7 @@ public:
         return tr.getblock(id);
     }
 
-    block_<station_name, train> getblock_(point_<station_name, train> &st) {
+    block_<station_name, trainID> getblock_(point_<station_name, trainID> &st) {
         return tr1.getblock_(st);
     }
 
@@ -1007,7 +1007,7 @@ public:
         tr.del(p);
     }
 
-    void del_(point_<station_name, train> &p) {
+    void del_(point_<station_name, trainID> &p) {
         tr1.del(p);
     }
 
@@ -1092,8 +1092,8 @@ public:
         output2 ans2[10005];
         int cnt = 0;
         bool flag1 = 0, flag2 = 0, fla1 = 0, fla2=0;
-        point_<station_name, train> first(begin, train()), second(end, train());
-        block_<station_name, train> fin, finn;
+        point_<station_name, trainID> first(begin, trainID()), second(end, trainID());
+        block_<station_name, trainID> fin, finn;
         tr1.myread(tr1.root, fin);
         //cout<<fin.ele[1].valu;
         while (!fin.leaf) {
@@ -1196,8 +1196,9 @@ public:
                 //if(!fin.ele[i].valu.released)continue;
 
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
-                train tra = fin.ele[i].valu;
-
+                trainID traid = fin.ele[i].valu;
+                train tra;
+                find(traid,tra);
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
                 //int hour,min,month,day;
                 Time tim1(tra.startsale.month, tra.startsale.day, tra.startTime.hour, tra.startTime.min);
@@ -1309,9 +1310,9 @@ public:
         out2 ans2;
         int cnt = 0;
         bool flag1 = 0, fla1 = 0;
-        point_<station_name, train> first(begin, train());
+        point_<station_name, trainID> first(begin, trainID());
         //point_<station_name, train> second(end, train());
-        block_<station_name, train> fin;
+        block_<station_name, trainID> fin;
         //block_<station_name, train> finn;
         tr1.myread(tr1.root, fin);
         while (!fin.leaf) {
@@ -1335,8 +1336,9 @@ public:
         for (i = 0; i < fin.size; i++) {
             if (first.index < fin.ele[i].index)break;
             if (first.index == fin.ele[i].index) {
-                train tra = fin.ele[i].valu;
-
+                trainID traid = fin.ele[i].valu;
+                train tra;
+                find(traid,tra);
 
                 int num1 = fin.ele[i].index.num;
                 flag1 = 1;
@@ -1443,8 +1445,8 @@ public:
         int cnt = 0;
         //bool fl=0;
         bool flag1 = 0, flag2 = 0, fla1 = 0, fla2=0;
-        point_<station_name, train> first(begin, train()), second(end, train());
-        block_<station_name, train> fin, finn;
+        point_<station_name, trainID> first(begin, trainID()), second(end, trainID());
+        block_<station_name, trainID> fin, finn;
         tr1.myread(tr1.root, fin);
         //cout<<fin.ele[1].valu;
         while (!fin.leaf) {
@@ -1519,7 +1521,7 @@ public:
                 }
                 flag1 = 1;
                 flag2 = 1;
-                if (fin.ele[i].index.num >= finn.ele[j].index.num||fin.ele[i].valu.id==ans1.id1||fin.ele[i].valu.id==ans2.id1){
+                if (fin.ele[i].index.num >= finn.ele[j].index.num||fin.ele[i].valu==ans1.id1||fin.ele[i].valu==ans2.id1){
                     if (i == fin.size - 1 && fin.next != -1) {
                         tr1.myread(fin.next, fin);
                         i = -1;
@@ -1533,8 +1535,9 @@ public:
                 }
                 //if(!fin.ele[i].valu.released)continue;
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
-                train tra = fin.ele[i].valu;
-
+                trainID traid = fin.ele[i].valu;
+                train tra;
+                find(traid,tra);
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
                 //int hour,min,month,day;
                 Time tim1(tra.startsale.month, tra.startsale.day, tra.startTime.hour, tra.startTime.min);
@@ -1674,10 +1677,10 @@ public:
     int buy_ticket(Seats &seat_,int tt,station_name &begin,station_name &end,int num,train &trai,bool flag,saleDate &date,string &put,long long &price,ticket_information &in){
         //bool flag1 = 0, flag2 = 0, fla1 = 0, fla2=0;
 
-        bool find=0,pend=0;
+        bool ffind=0,pend=0;
         long long pri=0;
-        point_<station_name, train> first(begin, trai), second(end, trai);
-        block_<station_name, train> fin, finn;
+        point_<station_name, trainID> first(begin, trai.id), second(end, trai.id);
+        block_<station_name, trainID> fin, finn;
         tr1.myread(tr1.root, fin);
         while (!fin.leaf) {
             int low = 0, high = fin.size;
@@ -1739,7 +1742,9 @@ public:
 //                flag1 = 1;
 //                flag2 = 1;
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
-                train tra = fin.ele[i].valu;
+                trainID traid = fin.ele[i].valu;
+                train tra;
+                find(traid,tra);
                 in.from=num1,in.to=num2;
 
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
@@ -1810,7 +1815,7 @@ public:
                 }
                 //std::cout<<seatt<<' ';
                 if(seatt>=num){
-                    find=1;
+                    ffind=1;
                     block<train_seat,int>blk=seat_.tr.getblock(ts);
                     int tmp=0,pos;
                     for(int l=0;l<blk.size;l++){
@@ -1853,7 +1858,7 @@ public:
             }
 
         }
-        if(find){
+        if(ffind){
             std::cout<<pri<<'\n';
             return 2;
         }else{
