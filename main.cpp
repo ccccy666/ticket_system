@@ -1,5 +1,5 @@
 //#include <iostream>
-#pragma comment(linker, "/STACK:1024000000,1024000000")
+//#pragma comment(linker, "/STACK:1024000000,1024000000")
 #include "Token_scanner.h"
 #include "Account.h"
 #include "Train.h"
