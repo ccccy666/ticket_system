@@ -58,15 +58,16 @@ void print(){
 }
 
 int main() {
-    //fclose(stdin);
-    //fclose(stdout);
+
     sjtu::map<user_id, account> now_user;
     //if(now_user.)
     //int log_num=0;
     string line, op, opp;
     All_account all_ac;
-    All_train all_train;
-    seats seat_;
+    //All_train all_train;
+    Al_train al_train;
+    //seats seat_;
+    Seats seat__;
     order order_;
     pendings wait;
     //op="",opp="";
@@ -92,7 +93,8 @@ int main() {
             s+=op[i];
         }
 
-        std::cout<<op<<' ';
+        printf("%s ",op.c_str());
+        //std::cout<<op<<' ';
 
         //printf("d ",tim);
         op = scan.nextToken();
@@ -222,21 +224,21 @@ int main() {
             op = scan.nextToken();
             opp = scan.nextToken();
             _id = opp;
-            if(s=="7830015")std::cout<<opp<<std::endl;
+            //if(s=="7830015")std::cout<<opp<<std::endl;
             auto it = now_user.find(_id);
-            if(s=="7830015")std::cout<<opp<<std::endl;
+            //if(s=="7830015")std::cout<<opp<<std::endl;
             if (it == now_user.end()) {
-                if(s=="7830015")std::cout<<opp<<std::endl;
+                //if(s=="7830015")std::cout<<opp<<std::endl;
                 printf("-1\n");
                 continue;
 
                 //break;
             }
-            if(s=="7830015")std::cout<<opp<<std::endl;
+            //if(s=="7830015")std::cout<<opp<<std::endl;
             printf("0\n");
 
             now_user.erase(it);
-            if(s=="7830015")std::cout<<opp<<std::endl;
+            //if(s=="7830015")std::cout<<opp<<std::endl;
         } else if (op == "query_profile") {
             account ac;
             user_id _id, id;//_id查询者,id被查询者
@@ -351,7 +353,7 @@ int main() {
                 opp=scan.nextToken();
                 if(op=="-i"){
                     id=opp;
-                    if(all_train.exist(id)){
+                    if(al_train.exist(id)){
                         printf("-1\n");
                         flag=1;
                         break;
@@ -465,20 +467,21 @@ int main() {
             se.max=tra.maxseat;
             se.num=tra.station_num;
             for(int j=1;j<=se.num-1;j++){
-                se.sea[j]=tra.maxseat;
+                se.sea[j]=seatt;
             }
 
             for(int i=0;i<=tra.finishsale-tra.startsale;i++){
                 train_seat ts;
                 ts.id=tra.id;
                 ts.d=i;
+                seat__.insert(ts,se);
 //                string f="TOFOREIGNLANDS";
 //                if(strcmp(tra.id.trainid,f.c_str())==0)std::cout<<ts.d<<std::endl;
-                point<train_seat,seat>p(ts,se);
-                seat_.insert(p);
+//                point<train_seat,seat>p(ts,se);
+//                seat_.insert(p);
             }
-
-            all_train.insert(tra);
+            al_train.insert(tra);
+            //all_train.insert(tra);
             //std::cout<<all_train.tr.root<<' ';
 
         } else if (op == "delete_train") {
@@ -487,11 +490,12 @@ int main() {
             trainID id;
             train tra;
             id=opp;
-            if(!all_train.exist(id)){
+            if(!al_train.exist(id)){
                 printf("-1\n");
                 continue;
             }
-            tra=all_train.find(id);
+            //al_train.find(id,tra);
+            al_train.find(id,tra);
             if(tra.released){
                 printf("-1\n");
             }else{
@@ -504,16 +508,16 @@ int main() {
                 for(int i=0;i<=d;i++){
                     ts.d=i;
 
-                    point<train_seat,seat>pi(ts,se);
-                    seat_.tr.del(pi);
+                    point<train_seat,int>pi(ts,0);
+                    seat__.tr.del(pi);
                 }
 //                for(int i=1;i<=tra.station_num;i++){
 //                    point_<station_name,train>pp(tra.name[i],tra);
 //                    all_train.del_(pp);
 //                }
 
-                point<trainID,train>p(id,tra);
-                all_train.del(p);
+                point<trainID,int>p(id,0);
+                al_train.del(p);
             }
 
         } else if (op == "release_train") {
@@ -521,35 +525,36 @@ int main() {
             opp=scan.nextToken();
             trainID id;
             train tra;
-            block<trainID,train> blk;
+            block<trainID,int> blk;
             //block_<station_name,train> bk;
             id=opp;
 //            std::cout<<id.trainid<<' ';
 //            all_train.tr.myread(0,blk);
             //std::cout<<id.trainid<<std::endl;
-            if(!all_train.exist(id)){
+            if(!al_train.exist(id)){
                 printf("-1\n");
                 continue;
             }
-            blk=all_train.getblock(id);
-            int tmp=0;
+            blk=al_train.getblock(id);
+            int tmp=0,pos;
             for (int i = 0; i < blk.size; i++) {
                 if (id == blk.ele[i].index){
-                    tra=blk.ele[i].valu;
+                    pos=blk.ele[i].valu;
                     break;
                 }
                 tmp++;
             }
-            if(blk.ele[tmp].valu.released==0){
-                blk.ele[tmp].valu.released=1;
+            al_train.list_.myread(pos,tra);
+            if(tra.released==0){
                 tra.released=1;
-
+                //tra.released=1;
+                al_train.list_.mywrite(pos,tra);
 //                string f="INSCRIPTIONS";
 //                if(strcmp(tra.id.trainid,f.c_str())==0)std::cout<<tra.name[14].name<<std::endl;
                 for (int i = 1; i <= tra.station_num; i++) {
 
-                    point_<station_name, train> pp(tra.name[i], tra);
-                    all_train.tr1.insert(pp);
+                    point_<station_name, trainID> pp(tra.name[i], tra.id);
+                    al_train.tr1.insert(pp);
                 }
             }else{
                 printf("-1\n");
@@ -557,7 +562,7 @@ int main() {
             }
 
 
-            all_train.mywrite(blk);
+            //all_train.mywrite(blk);
             printf("0\n");
         } else if (op == "query_train") {
             saleDate sd;
@@ -571,12 +576,12 @@ int main() {
                 opp=scan.nextToken();
                 if(op=="-i"){
                     id=opp;
-                    if(!all_train.exist(id)){
+                    if(!al_train.exist(id)){
                         printf("-1\n");
                         flag=1;
                         break;
                     }
-                    tra=all_train.find(id);
+                    al_train.find(id,tra);
 
                     ts.id=tra.id;
 
@@ -594,7 +599,7 @@ int main() {
             int traveltime;
             int delt=sd-tra.startsale;
             ts.d=delt;
-            se=seat_.find(ts);
+            seat__.find(ts,se);
             printf("%s %c\n",tra.id.trainid,tra.type);
             for(int i=1;i<=tra.station_num;i++){
                 printf("%s ",tra.name[i].name);
@@ -647,9 +652,9 @@ int main() {
             }
             if(flag)continue;
             int notuse= 0;
-            if(!flagp)all_train.query_ticket(from,to,sd,1,seat_,notuse);
-            else if(flagt)all_train.query_ticket(from,to,sd,1,seat_,notuse);
-            else if(flagc)all_train.query_ticket(from,to,sd,2,seat_,notuse);
+            if(!flagp)al_train.query_ticket(from,to,sd,1,seat__,notuse);
+            else if(flagt)al_train.query_ticket(from,to,sd,1,seat__,notuse);
+            else if(flagc)al_train.query_ticket(from,to,sd,2,seat__,notuse);
         } else if (op == "query_transfer") {
             trainID id;
             train tra;
@@ -673,9 +678,9 @@ int main() {
 
             }
             int notuse= 0;
-            if(!flagp)all_train.query_transfer(from,to,sd,1,seat_,notuse);
-            else if(flagt)all_train.query_transfer(from,to,sd,1,seat_,notuse);
-            else if(flagc)all_train.query_transfer(from,to,sd,2,seat_,notuse);
+            if(!flagp)al_train.query_transfer(from,to,sd,1,seat__,notuse);
+            else if(flagt)al_train.query_transfer(from,to,sd,1,seat__,notuse);
+            else if(flagc)al_train.query_transfer(from,to,sd,2,seat__,notuse);
         } else if (op == "buy_ticket") {
             trainID id;
             train tra;
@@ -698,12 +703,12 @@ int main() {
 
                 }else if(op=="-i"){
                     id=opp;
-                    if(!all_train.exist(id)){
+                    if(!al_train.exist(id)){
                         printf("-1\n");
                         flag=1;
                         break;
                     }
-                    tra=all_train.find(id);
+                    al_train.find(id,tra);
                     if(!tra.released){
                         printf("-1\n");
                         flag=1;
@@ -732,7 +737,7 @@ int main() {
             ticket_information in;
             //int nouse= stringToInt(s);
             //std::cout<<66666<<std::endl;
-            int back=all_train.buy_ticket(seat_,n,from,to,num,tra,flat,sd,put,price,in);
+            int back=al_train.buy_ticket(seat__,n,from,to,num,tra,flat,sd,put,price,in);
 
             if(back==0)continue;
             in.price=price;
@@ -812,8 +817,8 @@ int main() {
             if(back==0)continue;
             if(back==2){
                 point_<trainID,pending> pp(infor.id,pending());
-                 pp.valu.time=infor.time;
-                 wait.tr.del(pp);
+                pp.valu.time=infor.time;
+                wait.tr.del(pp);
                 continue;
             }
             //train tra;
@@ -823,20 +828,25 @@ int main() {
             train_seat ts;
             ts.id=infor.id,ts.d=infor.d;
 
-            block<train_seat,seat>blk;
-            blk=seat_.get_block(ts);
+            block<train_seat,int>blk;
+            blk=seat__.get_block(ts);
             //tra=all_train.find(infor.id);
-            int tmp=0;
+            int tmp=0,pos;
             for(int i=0;i<blk.size;i++){
-                if(blk.ele[i].index==ts)break;
+                if(blk.ele[i].index==ts){
+                    pos=blk.ele[i].valu;
+                    break;
+                }
                 tmp++;
             }
+            seat se;
+            seat__.list_.myread(pos,se);
             for(int i=infor.from;i<infor.to;i++){
-                blk.ele[tmp].valu.sea[i]+=infor.num;
+                se.sea[i]+=infor.num;
 
             }
-            seat_.tr.mywrite(blk.place,blk);
-            seat se=blk.ele[tmp].valu;
+            seat__.list_.mywrite(pos,se);
+            //seat se=blk.ele[tmp].valu;
 
             pending pe;
             point_<trainID,pending>k(infor.id,pending());
@@ -914,15 +924,15 @@ int main() {
 //                                tmp++;
 //                            }
                             for(int l=pe.from;l<pe.to;l++){
-                                blk.ele[tmp].valu.sea[l]-=pe.num;
+                                //blk.ele[tmp].valu.sea[l]-=pe.num;
                                 se.sea[l]-=pe.num;
                             }
 
-                            
+
                             //break;
                         }
                     }
-                    seat_.tr.mywrite(blk.place,blk);
+                    seat__.list_.mywrite(pos,se);
 
                     if(i==fin.size-1&&fin.next!=-1){
                         //cout<<fin.next;
@@ -944,7 +954,7 @@ int main() {
         } else if (op == "clean") {
             now_user.clear();
             all_ac.clear();
-            all_train.clear();
+            al_train.clear();
             order_.clear();
             wait.clear();
             printf("0\n");
