@@ -129,7 +129,7 @@ struct block {
 template<class key, class T>
 class b_plus_tree {
 public:
-    const int maxsize = 120, minsize = 60,m=121;
+    const int maxsize = 16, minsize = 8,m=17;
     int total=-1;
     sjtu::vector<int> vec;
     sjtu::vector<block<key,T>>ve;
