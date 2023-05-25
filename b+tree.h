@@ -88,8 +88,8 @@ struct block {
     int place = 0;
     int parent = -1;
 
-    point<key, T> ele[145];
-    int pos[145];//子树位置
+    point<key, T> ele[205];
+    int pos[205];//子树位置
     block<key,T>(){
         memset(pos,0,sizeof(pos));
 
@@ -129,7 +129,7 @@ struct block {
 template<class key, class T>
 class b_plus_tree {
 public:
-    const int maxsize = 140, minsize =70,m=141;
+    const int maxsize = 200, minsize =100,m=201;
     int total=-1;
     sjtu::vector<int> vec;
     sjtu::vector<block<key,T>>ve;
