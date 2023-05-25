@@ -108,7 +108,7 @@ int main() {
                 op = scan.nextToken();
                 opp = scan.nextToken();
                 if (op == "-g") {
-                    if (now_user.empty()) {
+                    if (all_ac.tr.total==-1) {
                         ac.privilege = 10;
                     } else {
 
@@ -116,7 +116,7 @@ int main() {
                         //std::cout<<ac.privilege<<std::endl;
                         //std::cout<<opp;
                     }
-                } else if (op == "-c" && !now_user.empty()) {
+                } else if (op == "-c" && all_ac.tr.total!=-1) {////////////////
                     empty=0;
                     _id = opp;
                     if (!all_ac.exist(_id)) {
@@ -125,7 +125,7 @@ int main() {
                         flag=1;
                         break;
                     }
-                    a=all_ac.find(_id);
+                    
                     auto it = now_user.find(_id);
                     if (it == now_user.end()) {
                         //std::cout<<1<<' ';
@@ -133,6 +133,7 @@ int main() {
                         flag=1;
                         break;
                     }
+                    a=all_ac.find(_id);
                 } else if (op == "-u") {
                     //_id = opp;
                     ac.id = opp;
