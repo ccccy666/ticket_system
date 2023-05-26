@@ -96,8 +96,8 @@ struct block_ {
     int place = 0;
     int parent = -1;
 
-    point_<key, T> ele[205];
-    int pos[205];//子树位置
+    point_<key, T> ele[125];
+    int pos[125];//子树位置
     block_<key,T>(){
 
     }
@@ -121,8 +121,8 @@ struct block_ {
 template<class key, class T>
 class b_plus_tree_ {
 public:
-    const int nu=2*(2048/(sizeof(key)+sizeof(T)));
-    const int maxsize = nu>10?nu:10, minsize = maxsize>>1,m=maxsize+1;
+    //const int nu=2*(2048/(sizeof(key)+sizeof(T)));
+    const int maxsize = 120, minsize = maxsize>>1,m=maxsize+1;
 
     int total=-1;
     sjtu::vector<int> vec;
