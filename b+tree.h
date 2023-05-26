@@ -129,7 +129,8 @@ struct block {
 template<class key, class T>
 class b_plus_tree {
 public:
-    const int maxsize = std::max(10,2*(2048/(sizeof(key)+sizeof(T)))), minsize = maxsize>>1,m=maxsize+1;
+    const int nu=2*(2048/(sizeof(key)+sizeof(T)));
+    const int maxsize = nu>10?nu:10, minsize = maxsize>>1,m=maxsize+1;
 
     int total=-1;
     sjtu::vector<int> vec;
