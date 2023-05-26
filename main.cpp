@@ -63,7 +63,8 @@ int main() {
     //if(now_user.)
     //int log_num=0;
     string line, op, opp;
-    All_account all_ac;
+    //All_account all_ac;
+    Al_account al_ac;
     //All_train all_train;
     Al_train al_train;
     //seats seat_;
@@ -101,6 +102,7 @@ int main() {
         if (op == "add_user") {
             account ac,a;//new account
             //string mid,mi;
+            int pos;
             bool empty=1;
             while (scan.hasMoreTokens()) {
 
@@ -108,7 +110,7 @@ int main() {
                 op = scan.nextToken();
                 opp = scan.nextToken();
                 if (op == "-g") {
-                    if (all_ac.tr.total==-1) {
+                    if (al_ac.tr.total==-1) {
                         ac.privilege = 10;
                     } else {
 
@@ -116,16 +118,16 @@ int main() {
                         //std::cout<<ac.privilege<<std::endl;
                         //std::cout<<opp;
                     }
-                } else if (op == "-c" && all_ac.tr.total!=-1) {////////////////
+                } else if (op == "-c" && al_ac.tr.total!=-1) {////////////////
                     empty=0;
                     _id = opp;
-                    if (!all_ac.exist(_id)) {
+                    if (!al_ac.exist(_id,pos)) {
                         //std::cout<<1<<' ';
                         printf("-1\n");
                         flag=1;
                         break;
                     }
-                    
+
                     auto it = now_user.find(_id);
                     if (it == now_user.end()) {
                         //std::cout<<1<<' ';
@@ -133,7 +135,7 @@ int main() {
                         flag=1;
                         break;
                     }
-                    a=all_ac.find(_id);
+                    al_ac.list_.myread(pos,a);
                 } else if (op == "-u") {
                     //_id = opp;
                     ac.id = opp;
@@ -175,13 +177,13 @@ int main() {
 //            string f="Estelle";
 //            if(strcmp(ac.id.userid,f.c_str())==0)std::cout<<ac.name<<'\n';
 
-            all_ac.insert(ac);
+            al_ac.insert(ac);
             printf("0\n");
         } else if (op == "login") {
             char word[42];
             account ac;
             user_id idd;
-
+            int pos;
             while (scan.hasMoreTokens()) {
                 op = scan.nextToken();
                 opp = scan.nextToken();
@@ -191,14 +193,14 @@ int main() {
                     //std::cout<<1<<std::endl;
                     //all_ac.exist(idd);
 
-                    if (!all_ac.exist(idd)||it!=now_user.end()) {
+                    if (!al_ac.exist(idd,pos)||it!=now_user.end()) {
 
                         printf("-1\n");
                         flag=1;
                         break;
                     }
 
-                    ac = all_ac.find(idd);
+                    al_ac.list_.myread(pos,ac);
                 } else if (op == "-p") {
 
                     stringTochar(opp, word);
@@ -243,6 +245,7 @@ int main() {
         } else if (op == "query_profile") {
             account ac;
             user_id _id, id;//_id查询者,id被查询者
+            int pos;
             while (scan.hasMoreTokens()) {
                 op = scan.nextToken();
                 opp = scan.nextToken();
@@ -257,12 +260,12 @@ int main() {
 
                 } else if (op == "-u") {
                     id = opp;
-                    if (!all_ac.exist(id)) {
+                    if (!al_ac.exist(id,pos)) {
                         printf("-1\n");
                         flag=1;
                         break;
                     }
-                    ac = all_ac.find(id);
+                    al_ac.list_.myread(pos,ac);
                 }
             }
             if(flag)continue;
@@ -279,10 +282,11 @@ int main() {
             printf("%s %s %s %d\n", ac.id.userid, ac.name, ac.email, ac.privilege);
             //std::cout<<ac;
         } else if (op == "modify_profile") {
-            block<user_id, account> blk;
+            block<user_id, int> blk;
             bool flagp = 0, flagn = 0, flagm = 0, flagg = 0;
-            account ac;
+            account ac,pre_ac;
             user_id _id, id;//_id查询者,id被查询者
+            int pos;
             while (scan.hasMoreTokens()) {
                 op = scan.nextToken();
                 opp = scan.nextToken();
@@ -300,12 +304,12 @@ int main() {
                 } else if (op == "-u") {
                     id = opp;
                     ac.id = id;
-                    if (!all_ac.exist(id)) {
+                    if (!al_ac.exist(id,pos)) {
                         printf("-1\n");
                         flag=1;
                         break;
                     }
-                    blk = all_ac.getblock(id);
+                    al_ac.list_.myread(pos,pre_ac);
                 } else if (op == "-p") {
                     flagp = 1;
                     stringTochar(opp, ac.password);
@@ -320,33 +324,34 @@ int main() {
                 }
             }
             if(flag)continue;
-            int tmp = 0;
-            for (int i = 0; i < blk.size; i++) {
-                if (id == blk.ele[i].index)break;
-                tmp++;
-            }//blk.ele[tmp].valu.password=ac.password;
+//            int tmp = 0;
+//            for (int i = 0; i < blk.size; i++) {
+//                if (id == blk.ele[i].index)break;
+//                tmp++;
+//            }//blk.ele[tmp].valu.password=ac.password;
             account a=now_user[_id];
-            if ((a!=ac&&a.privilege <= blk.ele[tmp].valu.privilege)||ac.privilege>=a.privilege) {
+            if ((a!=ac&&a.privilege <= pre_ac.privilege)||ac.privilege>=a.privilege) {
                 printf("-1\n");
                 continue;
             }
 
-            if (flagp)strcpy(blk.ele[tmp].valu.password, ac.password);
-            if (flagn)strcpy(blk.ele[tmp].valu.name, ac.name);
-            if (flagm)strcpy(blk.ele[tmp].valu.email, ac.email);
-            if (flagg)blk.ele[tmp].valu.privilege = ac.privilege;
-            printf("%s %s %s %d\n", blk.ele[tmp].valu.id.userid, blk.ele[tmp].valu.name, blk.ele[tmp].valu.email,
-                   blk.ele[tmp].valu.privilege);
+            if (flagp)strcpy(pre_ac.password, ac.password);
+            if (flagn)strcpy(pre_ac.name, ac.name);
+            if (flagm)strcpy(pre_ac.email, ac.email);
+            if (flagg)pre_ac.privilege = ac.privilege;
+            printf("%s %s %s %d\n", pre_ac.id.userid, pre_ac.name, pre_ac.email,
+                   pre_ac.privilege);
 //            if(tmp==0){
 //                point<user_id,account>p=blk.mini;
 //                blk.mini=blk.ele[0];
 //                all_ac.tr.change(blk,p,blk.mini);
 //            }
-            all_ac.mywrite(blk);
+            al_ac.list_.mywrite(pos,pre_ac);
         } else if (op == "add_train") {
             int seatt;
             trainID id;
             train tra;
+            int pos;
             while(scan.hasMoreTokens()){
                 int tmp=1;
                 string word;
@@ -354,7 +359,7 @@ int main() {
                 opp=scan.nextToken();
                 if(op=="-i"){
                     id=opp;
-                    if(al_train.exist(id)){
+                    if(al_train.exist(id,pos)){
                         printf("-1\n");
                         flag=1;
                         break;
@@ -491,12 +496,13 @@ int main() {
             trainID id;
             train tra;
             id=opp;
-            if(!al_train.exist(id)){
+            int pos;
+            if(!al_train.exist(id,pos)){
                 printf("-1\n");
                 continue;
             }
             //al_train.find(id,tra);
-            al_train.find(id,tra);
+            al_train.list_.myread(pos,tra);
             if(tra.released){
                 printf("-1\n");
             }else{
@@ -526,25 +532,26 @@ int main() {
             opp=scan.nextToken();
             trainID id;
             train tra;
-            block<trainID,int> blk;
+            //block<trainID,int> blk;
+            int pos;
             //block_<station_name,train> bk;
             id=opp;
 //            std::cout<<id.trainid<<' ';
 //            all_train.tr.myread(0,blk);
             //std::cout<<id.trainid<<std::endl;
-            if(!al_train.exist(id)){
+            if(!al_train.exist(id,pos)){
                 printf("-1\n");
                 continue;
             }
-            blk=al_train.getblock(id);
-            int tmp=0,pos;
-            for (int i = 0; i < blk.size; i++) {
-                if (id == blk.ele[i].index){
-                    pos=blk.ele[i].valu;
-                    break;
-                }
-                tmp++;
-            }
+//            blk=al_train.getblock(id);
+//            int tmp=0,pos;
+//            for (int i = 0; i < blk.size; i++) {
+//                if (id == blk.ele[i].index){
+//                    pos=blk.ele[i].valu;
+//                    break;
+//                }
+//                tmp++;
+//            }
             al_train.list_.myread(pos,tra);
             if(tra.released==0){
                 tra.released=1;
@@ -571,18 +578,19 @@ int main() {
             train tra;
             seat se;
             train_seat ts;
+            int pos;
             char stTime[8];
             while(scan.hasMoreTokens()){
                 op=scan.nextToken();
                 opp=scan.nextToken();
                 if(op=="-i"){
                     id=opp;
-                    if(!al_train.exist(id)){
+                    if(!al_train.exist(id,pos)){
                         printf("-1\n");
                         flag=1;
                         break;
                     }
-                    al_train.find(id,tra);
+                    al_train.list_.myread(pos,tra);
 
                     ts.id=tra.id;
 
@@ -690,6 +698,7 @@ int main() {
             bool flat=0;
             user_id uid;
             int num=0;
+            int pos;
             while(scan.hasMoreTokens()){
                 op=scan.nextToken();
                 opp=scan.nextToken();
@@ -704,12 +713,12 @@ int main() {
 
                 }else if(op=="-i"){
                     id=opp;
-                    if(!al_train.exist(id)){
+                    if(!al_train.exist(id,pos)){
                         printf("-1\n");
                         flag=1;
                         break;
                     }
-                    al_train.find(id,tra);
+                    al_train.list_.myread(pos,tra);
                     if(!tra.released){
                         printf("-1\n");
                         flag=1;
@@ -773,11 +782,11 @@ int main() {
             order_.insert(ele);
         } else if (op == "query_order") {
             user_id uid;
-
+            int pos;
             op=scan.nextToken();
             opp=scan.nextToken();
             uid=opp;
-            if(!all_ac.exist(uid)){
+            if(!al_ac.exist(uid,pos)){
 
                 printf("-1\n");
                 continue;
@@ -796,13 +805,14 @@ int main() {
         } else if (op == "refund_ticket") {
             user_id uid;
             int num=1;
+            int cord;
             while(scan.hasMoreTokens()){
                 op=scan.nextToken();
                 opp=scan.nextToken();
                 if(op=="-u"){
                     uid=opp;
                     auto it=now_user.find(uid);
-                    if(!all_ac.exist(uid)||it==now_user.end()){
+                    if(!al_ac.exist(uid,cord)||it==now_user.end()){
                         printf("-1\n");
                         flag=1;
                         break;
@@ -954,7 +964,7 @@ int main() {
 
         } else if (op == "clean") {
             now_user.clear();
-            all_ac.clear();
+            al_ac.clear();
             al_train.clear();
             order_.clear();
             wait.clear();
