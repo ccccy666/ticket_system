@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include "b+tree.h"
-
+#include "list.h"
 using std::string;
 #ifndef CODE_ACCOUNT_H
 #define CODE_ACCOUNT_H
@@ -73,10 +73,52 @@ public:
         return !(id==other.id);
     }
 };
+class Al_account{
+public:
+    //string file;
+    list<account> list_;
+    b_plus_tree<user_id,int> tr;
+    Al_account():tr("ac"),list_("ac_list"){};
+    ~Al_account(){}
 
+    bool exist(user_id &id,int &pos){
+        //int pos;
+
+        //list_.myread(pos,ac);
+        return tr.get(id,pos);
+    }
+
+    void insert(account &acc){
+        list_.total++;
+        point<user_id,int> p(acc.id,list_.total);
+        tr.insert(p);
+        list_.mywrite(list_.total,acc);
+    }
+//    account find(user_id &id){
+//
+//        return tr.find(id);
+//    }
+    void mywrite(block<user_id,int> &bk){
+
+        tr.mywrite(bk.place,bk);
+    }
+    block<user_id,int> getblock(user_id &id){
+        return tr.getblock(id);
+    }
+    void clear(){
+        list_.total=-1;
+        tr.root=-1;
+        tr.total=-1;
+    }
+    void del(){
+
+    };
+
+};
 class All_account{
 public:
     //string file;
+
     b_plus_tree<user_id,account> tr;
     All_account():tr("ac"){};
     ~All_account(){}
@@ -105,7 +147,9 @@ public:
         tr.root=-1;
         tr.total=-1;
     }
-    
+    void del(){
+
+    };
 
 };
 #endif //CODE_ACCOUNT_H
