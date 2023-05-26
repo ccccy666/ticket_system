@@ -88,8 +88,8 @@ struct block {
     int place = 0;
     int parent = -1;
 
-    point<key, T> ele[125];
-    int pos[125];//子树位置
+    point<key, T> ele[205];
+    int pos[205];//子树位置
     block<key,T>(){
         memset(pos,0,sizeof(pos));
 
