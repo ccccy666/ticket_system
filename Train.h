@@ -65,10 +65,11 @@ class station_name {
 public:
     char name[35];
     int num ;
-
+    int po;
     station_name() {
         name[0]='\0';
         num=0;
+        po=0;
     };
 
     station_name(std::string &in) {
@@ -83,6 +84,7 @@ public:
     station_name(const station_name &other) {
         strcpy(name, other.name);
         num = other.num;
+        po=other.po;
     }
 
     bool operator==(const station_name &other) const {
@@ -1182,9 +1184,10 @@ public:
                 //if(!fin.ele[i].valu.released)continue;
 
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
-                trainID traid = fin.ele[i].valu;
+                int c=  fin.ele[i].index.po;
                 train tra;
-                find(traid,tra);
+                list_.myread(c,tra);
+                //find(traid,tra);
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
                 //int hour,min,month,day;
                 Time tim1(tra.startsale.month, tra.startsale.day, tra.startTime.hour, tra.startTime.min);
@@ -1322,9 +1325,9 @@ public:
         for (i = 0; i < fin.size; i++) {
             if (first.index < fin.ele[i].index)break;
             if (first.index == fin.ele[i].index) {
-                trainID traid = fin.ele[i].valu;
+                int c=  fin.ele[i].index.po;
                 train tra;
-                find(traid,tra);
+                list_.myread(c,tra);
 
                 int num1 = fin.ele[i].index.num;
                 flag1 = 1;
@@ -1521,9 +1524,9 @@ public:
                 }
                 //if(!fin.ele[i].valu.released)continue;
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
-                trainID traid = fin.ele[i].valu;
+                int c=  fin.ele[i].index.po;
                 train tra;
-                find(traid,tra);
+                list_.myread(c,tra);
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
                 //int hour,min,month,day;
                 Time tim1(tra.startsale.month, tra.startsale.day, tra.startTime.hour, tra.startTime.min);
@@ -1728,9 +1731,9 @@ public:
 //                flag1 = 1;
 //                flag2 = 1;
                 int num1 = fin.ele[i].index.num, num2 = finn.ele[j].index.num;
-                trainID traid = fin.ele[i].valu;
+                int c=  fin.ele[i].index.po;
                 train tra;
-                find(traid,tra);
+                list_.myread(c,tra);
                 in.from=num1,in.to=num2;
 
                 int traveltime = tra.travelTime[num1 - 1] + tra.stopTime[num1];
