@@ -560,7 +560,7 @@ int main() {
 //                string f="INSCRIPTIONS";
 //                if(strcmp(tra.id.trainid,f.c_str())==0)std::cout<<tra.name[14].name<<std::endl;
                 for (int i = 1; i <= tra.station_num; i++) {
-
+                    tra.name[i].po=pos;
                     point_<station_name, trainID> pp(tra.name[i], tra.id);
                     al_train.tr1.insert(pp);
                 }
